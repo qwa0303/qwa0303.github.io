@@ -152,7 +152,7 @@
 				</div>
 			</article>
 
-		<!-- Contact -->
+				<!-- Contact -->
 			<article id="contact" class="wrapper style4">
 				<div class="container medium">
 					<header>
@@ -160,26 +160,31 @@
 						<p>在这里留下信息吧！</p>
 					</header>
 					<div class="row">
-    <div class="col-6 col-12-small">
-        <input type="text" name="name" id="name" placeholder="姓名" required />
-    </div>
-    <div class="col-6 col-12-small">
-        <input type="email" name="email" id="email" placeholder="邮箱" required />
-    </div>
-    <div class="col-12">
-        <input type="text" name="subject" id="subject" placeholder="主题" />
-    </div>
-    <div class="col-12">
-        <textarea name="message" id="message" placeholder="在这里留言..." rows="6" required></textarea>
-    </div>
-    <div class="col-12">
-        <ul class="actions">
-            <li><input type="submit" value="发送消息" class="primary" /></li>
-            <li><input type="reset" value="清空" /></li>
-        </ul>
-    </div>
-</div>
+						<div class="col-12">
+							<!-- 表单开始 -->
+							<form method="POST" action="https://formspree.io/f/mqkrpqzd">
+								<div class="row">
+									<div class="col-6 col-12-small">
+										<input type="text" name="name" id="name" placeholder="姓名" required />
+									</div>
+									<div class="col-6 col-12-small">
+										<input type="email" name="email" id="email" placeholder="邮箱" required />
+									</div>
+									<div class="col-12">
+										<input type="text" name="subject" id="subject" placeholder="主题" />
+									</div>
+									<div class="col-12">
+										<textarea name="message" id="message" placeholder="在这里留言..." rows="6" required></textarea>
+									</div>
+									<div class="col-12">
+										<ul class="actions">
+											<li><input type="submit" value="发送消息" class="primary" /></li>
+											<li><input type="reset" value="清空" /></li>
+										</ul>
+									</div>
+								</div>
 							</form>
+							<!-- 表单结束 -->
 						</div>
 						<div class="col-12">
 							<hr />
@@ -226,5 +231,6 @@
 	</body>
 
 </html>
+
 
 
