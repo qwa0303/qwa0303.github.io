@@ -2443,3 +2443,126 @@ input, select, textarea {
 					}
 
 	}
+/* ===== 表单样式修复 ===== */
+
+/* 确保表单容器正确 */
+#contact form {
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* 输入框样式优化 */
+#contact input[type="text"],
+#contact input[type="email"],
+#contact textarea {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+#contact input[type="text"]:focus,
+#contact input[type="email"]:focus,
+#contact textarea:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* 按钮样式 */
+#contact .actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#contact input[type="submit"],
+#contact input[type="reset"] {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#contact input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#contact input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+#contact input[type="reset"] {
+    background-color: #f5f5f5;
+    color: #333;
+    margin-left: 10px;
+}
+
+#contact input[type="reset"]:hover {
+    background-color: #e0e0e0;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+    #contact .col-6 {
+        width: 100%;
+    }
+    
+    #contact input[type="text"],
+    #contact input[type="email"] {
+        margin-bottom: 15px;
+    }
+}
+
+/* 技能进度条样式 */
+.skill-level {
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.level-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    border-radius: 3px;
+    transition: width 1s ease-in-out;
+}
+
+/* 技术标签 */
+.tech-stack {
+    margin-top: 20px;
+}
+
+.tech-tag {
+    display: inline-block;
+    background: #f5f5f5;
+    padding: 5px 15px;
+    margin: 5px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    color: #666;
+    border: 1px solid #e0e0e0;
+}
+
+.highlight {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* 项目卡片悬停效果 */
+.box.style2 {
+    transition: all 0.3s ease;
+}
+
+.box.style2:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
