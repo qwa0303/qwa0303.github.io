@@ -159,21 +159,26 @@
 						<h2>你有什么问题想要问我吗？</h2>
 						<p>在这里留下信息吧！</p>
 					</header>
-					<div class="row">
+										<div class="row">
 						<div class="col-12">
-							<form method="POST" action="https://formspree.io/f/mqkrpqzd" class="gtr-uniform">
+							<form action="https://formsubmit.co/你的邮箱@gmail.com" method="POST" class="gtr-uniform">
+								<!-- 添加隐藏字段 -->
+								<input type="hidden" name="_subject" value="博客新留言！">
+								<input type="hidden" name="_template" value="table">
+								<input type="hidden" name="_captcha" value="false">
+								
 								<div class="row gtr-uniform">
 									<div class="col-6 col-12-xsmall">
-										<input type="text" name="name" id="name" value="" placeholder="姓名" />
+										<input type="text" name="姓名" placeholder="姓名" required />
 									</div>
 									<div class="col-6 col-12-xsmall">
-										<input type="email" name="email" id="email" value="" placeholder="邮箱" />
+										<input type="email" name="邮箱" placeholder="邮箱" required />
 									</div>
 									<div class="col-12">
-										<input type="text" name="subject" id="subject" value="" placeholder="主题（可选）" />
+										<input type="text" name="主题" placeholder="主题（可选）" />
 									</div>
 									<div class="col-12">
-										<textarea name="message" id="message" placeholder="在这里留言..." rows="6"></textarea>
+										<textarea name="留言内容" placeholder="在这里留言..." rows="6" required></textarea>
 									</div>
 									<div class="col-12">
 										<ul class="actions">
@@ -230,6 +235,7 @@
 	</body>
 
 </html>
+
 
 
 
