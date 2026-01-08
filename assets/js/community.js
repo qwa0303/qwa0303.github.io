@@ -18,9 +18,6 @@ const CommunitySystem = {
         // 检查登录状态
         this.checkLoginStatus();
         
-        // 更新社区数据
-        this.updateCommunityStats();
-        
         // 根据当前页面加载不同内容
         this.loadPageSpecificContent();
         
@@ -30,117 +27,35 @@ const CommunitySystem = {
     
     // 初始化示例数据
     initializeSampleData() {
-        // 保持原来的示例数据不变...
-        const sampleUsers = [
-            {
-                id: 1,
-                username: '技术大神',
-                email: 'expert@example.com',
-                password: '123456',
-                avatar: 'https://ui-avatars.com/api/?name=技术大神&background=4CAF50&color=fff',
-                bio: '热爱分享技术的前端工程师',
-                joinDate: new Date().toISOString(),
-                lastActive: new Date().toISOString(),
-                role: 'user',
-                posts: [1, 2],
-                followers: [2, 3],
-                following: [2]
-            },
-            {
-                id: 2,
-                username: 'Python爱好者',
-                email: 'python@example.com',
-                password: '123456',
-                avatar: 'https://ui-avatars.com/api/?name=Python爱好者&background=2196F3&color=fff',
-                bio: 'Python数据分析入门中',
-                joinDate: new Date().toISOString(),
-                lastActive: new Date().toISOString(),
-                role: 'user',
-                posts: [3],
-                followers: [1],
-                following: [1]
-            },
-            {
-                id: 3,
-                username: '算法新手',
-                email: 'algorithm@example.com',
-                password: '123456',
-                avatar: 'https://ui-avatars.com/api/?name=算法新手&background=FF9800&color=fff',
-                bio: '刷题学习中',
-                joinDate: new Date().toISOString(),
-                lastActive: new Date().toISOString(),
-                role: 'user',
-                posts: [],
-                followers: [],
-                following: [1]
-            }
-        ];
+        // 创建空数组
+        const emptyUsers = [];
+        const emptyPosts = [];
+        const emptyComments = [];
         
-        const samplePosts = [
-            {
-                id: 1,
-                userId: 1,
-                content: '今天学习了Vue 3的Composition API，感觉比Options API更灵活！\n\n有没有一起学习的小伙伴？',
-                tags: ['前端', 'Vue', 'JavaScript'],
-                timestamp: new Date().toISOString(),
-                likes: [2, 3],
-                comments: [1, 2],
-                views: 156,
-                type: 'discussion'
-            },
-            {
-                id: 2,
-                userId: 1,
-                content: '推荐几个学习前端的好网站：\n1. MDN Web Docs\n2. freeCodeCamp\n3. JavaScript.info',
-                tags: ['前端', '学习资源'],
-                timestamp: new Date(Date.now() - 86400000).toISOString(),
-                likes: [2],
-                comments: [],
-                views: 89,
-                type: 'article'
-            },
-            {
-                id: 3,
-                userId: 2,
-                content: 'Python的pandas库真的好用，数据处理效率大大提升！大家有什么数据分析的经验分享吗？',
-                tags: ['Python', '数据分析', 'Pandas'],
-                timestamp: new Date(Date.now() - 172800000).toISOString(),
-                likes: [1],
-                comments: [3],
-                views: 120,
-                type: 'discussion'
-            }
-        ];
+        // 可选：添加你自己的账号
+        // const myUser = {
+        //     id: 1,
+        //     username: 'GJY',
+        //     email: 'your-email@example.com',
+        //     password: this.hashPassword('your-password'),
+        //     avatar: 'images/pic00.jpg',
+        //     bio: '计算机专业学生，热爱编程与分享',
+        //     joinDate: new Date().toISOString(),
+        //     lastActive: new Date().toISOString(),
+        //     role: 'admin',
+        //     posts: [],
+        //     followers: [],
+        //     following: []
+        // };
+        // emptyUsers.push(myUser);
         
-        const sampleComments = [
-            {
-                id: 1,
-                postId: 1,
-                userId: 2,
-                content: '我也在学Vue 3，可以交流一下！',
-                timestamp: new Date().toISOString()
-            },
-            {
-                id: 2,
-                postId: 1,
-                userId: 3,
-                content: 'Composition API确实更优雅',
-                timestamp: new Date().toISOString()
-            },
-            {
-                id: 3,
-                postId: 3,
-                userId: 1,
-                content: '可以试试NumPy和Matplotlib，配合使用效果更好',
-                timestamp: new Date().toISOString()
-            }
-        ];
+        localStorage.setItem(this.STORAGE_KEYS.USERS, JSON.stringify(emptyUsers));
+        localStorage.setItem(this.STORAGE_KEYS.POSTS, JSON.stringify(emptyPosts));
+        localStorage.setItem(this.STORAGE_KEYS.COMMENTS, JSON.stringify(emptyComments));
         
-        localStorage.setItem(this.STORAGE_KEYS.USERS, JSON.stringify(sampleUsers));
-        localStorage.setItem(this.STORAGE_KEYS.POSTS, JSON.stringify(samplePosts));
-        localStorage.setItem(this.STORAGE_KEYS.COMMENTS, JSON.stringify(sampleComments));
+        console.log('社区数据已初始化：空数据状态');
     },
-    
+           
     // 加载页面特定内容
     loadPageSpecificContent() {
         // 首页（index.html）功能
@@ -162,13 +77,28 @@ const CommunitySystem = {
         }
     },
     
-    // 加载热门帖子
+    // 加载热门帖子 - 空数据友好版
     loadHotPosts() {
         const posts = this.getPosts();
         const users = this.getUsers();
         const container = document.getElementById('hotPosts');
         
         if (!container) return;
+        
+        if (posts.length === 0) {
+            // 空状态：没有帖子
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h3>欢迎来到社区！</h3>
+                    <p>还没有人发布帖子，快来第一个分享吧！</p>
+                    <button onclick="CommunitySystem.showAuthModal('register')" class="btn btn-primary">
+                        注册并发布第一个帖子
+                    </button>
+                </div>
+            `;
+            return;
+        }
         
         // 按热度排序（点赞数+评论数）
         const hotPosts = [...posts]
@@ -178,11 +108,6 @@ const CommunitySystem = {
                 return scoreB - scoreA;
             })
             .slice(0, 5); // 只显示前5个
-        
-        if (hotPosts.length === 0) {
-            container.innerHTML = '<p class="empty-message">还没有热门帖子</p>';
-            return;
-        }
         
         container.innerHTML = hotPosts.map(post => {
             const author = users.find(u => u.id === post.userId);
@@ -211,7 +136,7 @@ const CommunitySystem = {
         }).join('');
     },
     
-    // 加载最新文章
+    // 加载最新文章 - 空数据友好版
     loadNewArticles() {
         const posts = this.getPosts();
         const users = this.getUsers();
@@ -219,15 +144,25 @@ const CommunitySystem = {
         
         if (!container) return;
         
+        if (posts.length === 0) {
+            // 空状态：没有文章
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+                    <h3>期待你的第一篇文章</h3>
+                    <p>成为社区的第一个内容创作者！</p>
+                    <button onclick="CommunitySystem.showAuthModal('register')" class="btn btn-outline">
+                        注册并开始写作
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
         // 按时间排序，取最新5个
         const newPosts = [...posts]
             .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
             .slice(0, 5);
-        
-        if (newPosts.length === 0) {
-            container.innerHTML = '<p class="empty-message">还没有文章</p>';
-            return;
-        }
         
         container.innerHTML = newPosts.map(post => {
             const author = users.find(u => u.id === post.userId);
@@ -248,22 +183,32 @@ const CommunitySystem = {
         }).join('');
     },
     
-    // 加载在线用户
+    // 加载在线用户 - 空数据友好版
     loadOnlineUsers() {
         const container = document.getElementById('onlineUsers');
         if (!container) return;
         
         const users = this.getUsers();
         
+        if (users.length === 0) {
+            // 空状态：没有用户
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">👤</div>
+                    <h3>成为第一个成员</h3>
+                    <p>注册后你的头像会显示在这里</p>
+                    <button onclick="CommunitySystem.showAuthModal('register')" class="btn btn-primary">
+                        立即注册
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
         // 按最后活跃时间排序，取前5个
         const onlineUsers = users
             .sort((a, b) => new Date(b.lastActive) - new Date(a.lastActive))
             .slice(0, 5);
-        
-        if (onlineUsers.length === 0) {
-            container.innerHTML = '<p class="empty-message">暂无在线用户</p>';
-            return;
-        }
         
         container.innerHTML = onlineUsers.map(user => `
             <div class="user-item">
@@ -276,38 +221,75 @@ const CommunitySystem = {
         `).join('');
     },
     
-    // 更新社区统计数据
-    updateCommunityStats() {
-        const users = this.getUsers();
+    // 加载帖子（用于其他页面）
+    loadPosts() {
         const posts = this.getPosts();
+        const users = this.getUsers();
+        const container = document.getElementById('postsContainer');
         
-        // 首页统计数据
-        const totalMembers = users.length;
-        const totalPosts = posts.length;
+        if (!container) return;
         
-        // 计算今日活跃用户（24小时内活跃）
-        const activeToday = users.filter(user => {
-            const lastActive = new Date(user.lastActive);
-            const now = new Date();
-            const diffHours = (now - lastActive) / (1000 * 60 * 60);
-            return diffHours < 24;
-        }).length;
-        
-        // 更新DOM元素
-        if (document.getElementById('totalMembers')) {
-            document.getElementById('totalMembers').textContent = totalMembers;
+        if (posts.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">💬</div>
+                    <h3>这里好安静...</h3>
+                    <p>还没有人发表内容，快来第一个发言吧！</p>
+                    <button onclick="CommunitySystem.showAuthModal('register')" class="btn btn-primary">
+                        成为第一个发帖人
+                    </button>
+                </div>
+            `;
+            return;
         }
         
-        if (document.getElementById('totalPosts')) {
-            document.getElementById('totalPosts').textContent = totalPosts;
-        }
+        // 按时间排序（最新的在前）
+        posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         
-        if (document.getElementById('activeToday')) {
-            document.getElementById('activeToday').textContent = activeToday;
-        }
-        
-        // 更新用户面板的数据
-        this.updateUserPanelStats();
+        container.innerHTML = posts.map(post => {
+            const author = users.find(u => u.id === post.userId);
+            const commentCount = post.comments.length;
+            const likeCount = post.likes.length;
+            const currentUser = this.getCurrentUser();
+            const isLiked = currentUser ? post.likes.includes(currentUser.id) : false;
+            
+            return `
+                <div class="post-card" data-post-id="${post.id}">
+                    <div class="post-header">
+                        <img src="${author?.avatar || 'https://ui-avatars.com/api/?name=User'}" 
+                             alt="${author?.username || '用户'}" 
+                             class="post-avatar">
+                        <div class="post-meta">
+                            <div class="post-author">${author?.username || '未知用户'}</div>
+                            <div class="post-time">${this.formatTime(post.timestamp)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="post-content">${this.formatPostContent(post.content)}</div>
+                    
+                    ${post.tags.length > 0 ? `
+                        <div class="post-tags">
+                            ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="post-footer">
+                        <div class="post-actions-sm">
+                            <button class="action-btn ${isLiked ? 'liked' : ''}" 
+                                    onclick="CommunitySystem.toggleLike(${post.id})">
+                                <i class="fas fa-heart"></i>
+                                <span>${likeCount}</span>
+                            </button>
+                            <button class="action-btn" onclick="CommunitySystem.showComments(${post.id})">
+                                <i class="fas fa-comment"></i>
+                                <span>${commentCount}</span>
+                            </button>
+                        </div>
+                        <div class="comment-count">${commentCount} 条评论</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     },
     
     // 更新用户面板统计数据
@@ -363,6 +345,12 @@ const CommunitySystem = {
     // 显示登录/注册模态框
     showAuthModal(type = 'login') {
         const modal = document.getElementById('authModal');
+        if (!modal) {
+            // 如果没有模态框，直接弹出提示
+            alert('请先注册/登录');
+            return;
+        }
+        
         const modalContent = modal.querySelector('.modal-content') || modal;
         
         if (type === 'login') {
@@ -459,11 +447,11 @@ const CommunitySystem = {
             alert('登录成功！');
             
             // 关闭模态框
-            document.getElementById('authModal').style.display = 'none';
+            const modal = document.getElementById('authModal');
+            if (modal) modal.style.display = 'none';
             
             // 重新加载页面内容
             this.renderUserPanel();
-            this.updateCommunityStats();
             this.loadPageSpecificContent();
         } catch (error) {
             alert(error.message);
@@ -486,18 +474,57 @@ const CommunitySystem = {
             alert('注册成功！');
             
             // 关闭模态框
-            document.getElementById('authModal').style.display = 'none';
+            const modal = document.getElementById('authModal');
+            if (modal) modal.style.display = 'none';
             
             // 重新加载页面内容
             this.renderUserPanel();
-            this.updateCommunityStats();
             this.loadPageSpecificContent();
         } catch (error) {
             alert(error.message);
         }
     },
     
-    // 用户注册（保持原功能）
+    // 点赞/取消点赞
+    toggleLike(postId) {
+        const user = this.getCurrentUser();
+        if (!user) {
+            alert('请先登录才能点赞');
+            return false;
+        }
+        
+        const posts = this.getPosts();
+        const post = posts.find(p => p.id === postId);
+        
+        if (!post) return false;
+        
+        const index = post.likes.indexOf(user.id);
+        if (index === -1) {
+            post.likes.push(user.id);
+        } else {
+            post.likes.splice(index, 1);
+        }
+        
+        this.savePosts(posts);
+        
+        // 重新加载帖子显示
+        this.loadPageSpecificContent();
+        return true;
+    },
+    
+    // 显示/隐藏评论
+    showComments(postId) {
+        const section = document.getElementById(`comments-${postId}`);
+        if (!section) return;
+        
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    },
+    
+    // 用户注册
     register(userData) {
         const users = this.getUsers();
         
@@ -533,7 +560,7 @@ const CommunitySystem = {
         return newUser;
     },
     
-    // 用户登录（保持原功能）
+    // 用户登录
     login(username, password) {
         const users = this.getUsers();
         const user = users.find(u => 
@@ -558,19 +585,18 @@ const CommunitySystem = {
         return user;
     },
     
-    // 用户登出（保持原功能）
+    // 用户登出
     logout() {
         localStorage.removeItem('community_session');
         
         // 重新加载页面内容
         this.renderUserPanel();
-        this.updateCommunityStats();
         this.loadPageSpecificContent();
         
         alert('已退出登录');
     },
     
-    // 获取当前用户（保持原功能）
+    // 获取当前用户
     getCurrentUser() {
         const session = JSON.parse(localStorage.getItem('community_session') || 'null');
         if (!session) return null;
@@ -579,7 +605,7 @@ const CommunitySystem = {
         return users.find(u => u.id === session.userId);
     },
     
-    // 检查登录状态（保持原功能）
+    // 检查登录状态
     checkLoginStatus() {
         const user = this.getCurrentUser();
         if (user) {
@@ -589,7 +615,7 @@ const CommunitySystem = {
         return !!user;
     },
     
-    // 数据存储辅助方法（保持原功能）
+    // 数据存储辅助方法
     getUsers() {
         return JSON.parse(localStorage.getItem(this.STORAGE_KEYS.USERS) || '[]');
     },
@@ -655,5 +681,7 @@ const CommunitySystem = {
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
-    CommunitySystem.init();
+    if (typeof CommunitySystem !== 'undefined') {
+        CommunitySystem.init();
+    }
 });
