@@ -9,21 +9,28 @@ const CommunitySystem = {
     },
     
     // 初始化数据
-    init() {
-        // 初始化默认数据（如果不存在）
-        if (!localStorage.getItem(this.STORAGE_KEYS.USERS)) {
-            this.initializeSampleData();
-        }
-        
-        // 检查登录状态
-        this.checkLoginStatus();
-        
-        // 根据当前页面加载不同内容
-        this.loadPageSpecificContent();
-        
-        // 渲染用户面板
-        this.renderUserPanel();
-    },
+init() {
+    // 🔥 临时添加：强制清空旧数据（只加这一次）
+    localStorage.removeItem('community_users');
+    localStorage.removeItem('community_posts');
+    localStorage.removeItem('community_comments');
+    localStorage.removeItem('community_session');
+    console.log('已强制清空旧数据');
+    
+    // 初始化默认数据（如果不存在）
+    if (!localStorage.getItem(this.STORAGE_KEYS.USERS)) {
+        this.initializeSampleData();
+    }
+    
+    // 检查登录状态
+    this.checkLoginStatus();
+    
+    // 根据当前页面加载不同内容
+    this.loadPageSpecificContent();
+    
+    // 渲染用户面板
+    this.renderUserPanel();
+},
     
     // 初始化示例数据
     initializeSampleData() {
