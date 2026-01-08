@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术社区 | 编程学习交流平台</title>
+    <meta name="description" content="一个开放的编程学习社区，分享技术、交流经验、共同成长">
+    <meta name="keywords" content="编程社区,技术交流,学习平台,编程学习,开源社区">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/community.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <!-- 社区导航栏 -->
+    <nav class="community-nav">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">💻</span>
+                <span class="logo-text">CodeHub</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">首页</a></li>
+                <li><a href="personal.html">我的主页</a></li>  <!-- 链接到你的个人页面 -->
+                <li><a href="#articles">文章</a></li>
+                <li><a href="#questions">问答</a></li>
+                <li><a href="#projects">项目</a></li>
+                <li><a href="#about">关于</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-outline" onclick="CommunitySystem.showAuthForm()">登录/注册</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 社区英雄区 -->
+    <section class="community-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>欢迎来到编程学习社区</h1>
+                <p class="hero-subtitle">一个开放、友好的技术交流平台，与志同道合的人一起成长</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <strong id="totalMembers">1,234</strong>
+                        <span>社区成员</span>
+                    </div>
+                    <div class="stat">
+                        <strong id="totalPosts">5,678</strong>
+                        <span>技术文章</span>
+                    </div>
+                    <div class="stat">
+                        <strong id="activeToday">89</strong>
+                        <span>今日活跃</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-large" onclick="CommunitySystem.showAuthForm('register')">
+                        加入社区
+                    </button>
+                    <a href="personal.html" class="btn btn-outline btn-large">
+                        访问我的主页
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 社区内容区 -->
+    <main class="container">
+        <div class="row">
+            <!-- 左侧：热门内容 -->
+            <div class="col-8">
+                <section class="community-section">
+                    <h2>🔥 热门讨论</h2>
+                    <div class="posts-container" id="hotPosts">
+                        <!-- 热门帖子动态加载 -->
+                    </div>
+                </section>
+                
+                <section class="community-section">
+                    <h2>📝 最新文章</h2>
+                    <div class="articles-container" id="newArticles">
+                        <!-- 最新文章动态加载 -->
+                    </div>
+                </section>
+            </div>
+            
+            <!-- 右侧：社区信息 -->
+            <div class="col-4">
+                <div class="community-sidebar">
+                    <!-- 用户面板 -->
+                    <div class="user-panel" id="userPanel">
+                        <!-- 动态显示登录状态 -->
+                    </div>
+                    
+                    <!-- 在线用户 -->
+                    <div class="sidebar-widget">
+                        <h3>👥 在线用户</h3>
+                        <div class="online-users" id="onlineUsers">
+                            <!-- 在线用户列表 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 社区规则 -->
+                    <div class="sidebar-widget">
+                        <h3>📜 社区准则</h3>
+                        <ul class="community-rules">
+                            <li>🤝 尊重他人，友善交流</li>
+                            <li>💡 分享知识，共同成长</li>
+                            <li>🚫 禁止广告、恶意攻击</li>
+                            <li>🔒 保护隐私，安全第一</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 特别推荐 -->
+                    <div class="sidebar-widget featured-profile">
+                        <h3>⭐ 特别推荐</h3>
+                        <div class="featured-user">
+                            <img src="images/pic00.jpg" alt="GJY" class="featured-avatar">
+                            <div class="featured-info">
+                                <h4>GJY</h4>
+                                <p>计算机专业学生，热爱编程与分享</p>
+                                <a href="personal.html" class="btn btn-small">访问主页</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="community-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>CodeHub</h3>
+                    <p>一个开源的技术交流社区</p>
+                    <p>基于 GitHub Pages 构建</p>
+                </div>
+                <div class="footer-section">
+                    <h4>快速链接</h4>
+                    <ul>
+                        <li><a href="personal.html">我的主页</a></li>
+                        <li><a href="#about">关于社区</a></li>
+                        <li><a href="#rules">社区规则</a></li>
+                        <li><a href="#help">帮助中心</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>联系方式</h4>
+                    <ul class="contact-links">
+                        <li><a href="mailto:13897934732@163.com">📧 邮箱</a></li>
+                        <li><a href="https://github.com/qwa0303">💻 GitHub</a></li>
+                        <li><a href="https://space.bilibili.com/齐予安">🎬 Bilibili</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CodeHub 社区 | 设计灵感来自 HTML5 UP</p>
+                <p>个人主页基于 Miniport 模板修改</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 模态框（登录/注册） -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <!-- 动态加载登录/注册表单 -->
+        </div>
+    </div>
+
+    <!-- 脚本 -->
+    <script src="assets/js/community.js"></script>
+    <script>
+        // 页面加载时初始化社区
+        document.addEventListener('DOMContentLoaded', function() {
+            CommunitySystem.init();
+            
+            // 更新统计数据
+            CommunitySystem.updateStats();
+            
+            // 加载热门内容
+            CommunitySystem.loadHotPosts();
+            CommunitySystem.loadNewArticles();
+            
+            // 更新特别推荐
+            document.querySelector('.featured-user a').href = 'personal.html';
+        });
+    </script>
+</body>
+</html>
