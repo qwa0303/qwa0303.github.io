@@ -1,6 +1,6 @@
-// 社区系统 - 完全独立的多用户功能
+// 社区系统 - 适配新首页结构
 const CommunitySystem = {
-    // 数据存储键名（使用独立键，不影响原系统）
+    // 数据存储键名
     STORAGE_KEYS: {
         USERS: 'community_users',
         POSTS: 'community_posts',
@@ -20,8 +20,9 @@ const CommunitySystem = {
         
         // 更新社区数据
         this.updateCommunityStats();
-        this.loadPosts();
-        this.loadOnlineUsers();
+        
+        // 根据当前页面加载不同内容
+        this.loadPageSpecificContent();
         
         // 渲染用户面板
         this.renderUserPanel();
@@ -29,12 +30,13 @@ const CommunitySystem = {
     
     // 初始化示例数据
     initializeSampleData() {
+        // 保持原来的示例数据不变...
         const sampleUsers = [
             {
                 id: 1,
                 username: '技术大神',
                 email: 'expert@example.com',
-                password: '123456', // 实际中要哈希加密
+                password: '123456',
                 avatar: 'https://ui-avatars.com/api/?name=技术大神&background=4CAF50&color=fff',
                 bio: '热爱分享技术的前端工程师',
                 joinDate: new Date().toISOString(),
@@ -82,25 +84,31 @@ const CommunitySystem = {
                 tags: ['前端', 'Vue', 'JavaScript'],
                 timestamp: new Date().toISOString(),
                 likes: [2, 3],
-                comments: [1, 2]
+                comments: [1, 2],
+                views: 156,
+                type: 'discussion'
             },
             {
                 id: 2,
                 userId: 1,
                 content: '推荐几个学习前端的好网站：\n1. MDN Web Docs\n2. freeCodeCamp\n3. JavaScript.info',
                 tags: ['前端', '学习资源'],
-                timestamp: new Date(Date.now() - 86400000).toISOString(), // 1天前
+                timestamp: new Date(Date.now() - 86400000).toISOString(),
                 likes: [2],
-                comments: []
+                comments: [],
+                views: 89,
+                type: 'article'
             },
             {
                 id: 3,
                 userId: 2,
                 content: 'Python的pandas库真的好用，数据处理效率大大提升！大家有什么数据分析的经验分享吗？',
                 tags: ['Python', '数据分析', 'Pandas'],
-                timestamp: new Date(Date.now() - 172800000).toISOString(), // 2天前
+                timestamp: new Date(Date.now() - 172800000).toISOString(),
                 likes: [1],
-                comments: [3]
+                comments: [3],
+                views: 120,
+                type: 'discussion'
             }
         ];
         
@@ -133,11 +141,366 @@ const CommunitySystem = {
         localStorage.setItem(this.STORAGE_KEYS.COMMENTS, JSON.stringify(sampleComments));
     },
     
-    // 用户注册
+    // 加载页面特定内容
+    loadPageSpecificContent() {
+        // 首页（index.html）功能
+        if (document.getElementById('hotPosts')) {
+            this.loadHotPosts();
+        }
+        
+        if (document.getElementById('newArticles')) {
+            this.loadNewArticles();
+        }
+        
+        if (document.getElementById('onlineUsers')) {
+            this.loadOnlineUsers();
+        }
+        
+        // 社区页面（如果有postsContainer）
+        if (document.getElementById('postsContainer')) {
+            this.loadPosts();
+        }
+    },
+    
+    // 加载热门帖子
+    loadHotPosts() {
+        const posts = this.getPosts();
+        const users = this.getUsers();
+        const container = document.getElementById('hotPosts');
+        
+        if (!container) return;
+        
+        // 按热度排序（点赞数+评论数）
+        const hotPosts = [...posts]
+            .sort((a, b) => {
+                const scoreA = a.likes.length + a.comments.length + (a.views || 0) / 10;
+                const scoreB = b.likes.length + b.comments.length + (b.views || 0) / 10;
+                return scoreB - scoreA;
+            })
+            .slice(0, 5); // 只显示前5个
+        
+        if (hotPosts.length === 0) {
+            container.innerHTML = '<p class="empty-message">还没有热门帖子</p>';
+            return;
+        }
+        
+        container.innerHTML = hotPosts.map(post => {
+            const author = users.find(u => u.id === post.userId);
+            const commentCount = post.comments.length;
+            const likeCount = post.likes.length;
+            
+            return `
+                <div class="post-item">
+                    <div class="post-header">
+                        <img src="${author?.avatar || 'https://ui-avatars.com/api/?name=User'}" 
+                             alt="${author?.username || '用户'}" 
+                             class="post-avatar">
+                        <div class="post-meta">
+                            <div class="post-author">${author?.username || '未知用户'}</div>
+                            <div class="post-time">${this.formatTime(post.timestamp)}</div>
+                        </div>
+                    </div>
+                    <div class="post-content-short">${this.truncateText(post.content, 100)}</div>
+                    <div class="post-stats">
+                        <span class="stat-item">👍 ${likeCount}</span>
+                        <span class="stat-item">💬 ${commentCount}</span>
+                        <span class="stat-item">👁️ ${post.views || 0}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+    
+    // 加载最新文章
+    loadNewArticles() {
+        const posts = this.getPosts();
+        const users = this.getUsers();
+        const container = document.getElementById('newArticles');
+        
+        if (!container) return;
+        
+        // 按时间排序，取最新5个
+        const newPosts = [...posts]
+            .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .slice(0, 5);
+        
+        if (newPosts.length === 0) {
+            container.innerHTML = '<p class="empty-message">还没有文章</p>';
+            return;
+        }
+        
+        container.innerHTML = newPosts.map(post => {
+            const author = users.find(u => u.id === post.userId);
+            
+            return `
+                <div class="article-item">
+                    <h4 class="article-title">${this.truncateText(post.content.split('\n')[0], 50)}</h4>
+                    <div class="article-meta">
+                        <span>👤 ${author?.username || '未知用户'}</span>
+                        <span>🕐 ${this.formatTime(post.timestamp)}</span>
+                    </div>
+                    <p class="article-excerpt">${this.truncateText(post.content, 80)}</p>
+                    <div class="article-tags">
+                        ${post.tags.map(tag => `<span class="tag-small">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+    
+    // 加载在线用户
+    loadOnlineUsers() {
+        const container = document.getElementById('onlineUsers');
+        if (!container) return;
+        
+        const users = this.getUsers();
+        
+        // 按最后活跃时间排序，取前5个
+        const onlineUsers = users
+            .sort((a, b) => new Date(b.lastActive) - new Date(a.lastActive))
+            .slice(0, 5);
+        
+        if (onlineUsers.length === 0) {
+            container.innerHTML = '<p class="empty-message">暂无在线用户</p>';
+            return;
+        }
+        
+        container.innerHTML = onlineUsers.map(user => `
+            <div class="user-item">
+                <img src="${user.avatar}" alt="${user.username}" class="user-avatar">
+                <div class="user-info">
+                    <h4>${user.username}</h4>
+                    <p>${user.bio || '还没有个人简介'}</p>
+                </div>
+            </div>
+        `).join('');
+    },
+    
+    // 更新社区统计数据
+    updateCommunityStats() {
+        const users = this.getUsers();
+        const posts = this.getPosts();
+        
+        // 首页统计数据
+        const totalMembers = users.length;
+        const totalPosts = posts.length;
+        
+        // 计算今日活跃用户（24小时内活跃）
+        const activeToday = users.filter(user => {
+            const lastActive = new Date(user.lastActive);
+            const now = new Date();
+            const diffHours = (now - lastActive) / (1000 * 60 * 60);
+            return diffHours < 24;
+        }).length;
+        
+        // 更新DOM元素
+        if (document.getElementById('totalMembers')) {
+            document.getElementById('totalMembers').textContent = totalMembers;
+        }
+        
+        if (document.getElementById('totalPosts')) {
+            document.getElementById('totalPosts').textContent = totalPosts;
+        }
+        
+        if (document.getElementById('activeToday')) {
+            document.getElementById('activeToday').textContent = activeToday;
+        }
+        
+        // 更新用户面板的数据
+        this.updateUserPanelStats();
+    },
+    
+    // 更新用户面板统计数据
+    updateUserPanelStats() {
+        const user = this.getCurrentUser();
+        if (user && document.querySelector('.user-stats')) {
+            const statsContainer = document.querySelector('.user-stats');
+            statsContainer.innerHTML = `
+                <span>帖子: ${user.posts.length}</span>
+                <span>粉丝: ${user.followers.length}</span>
+            `;
+        }
+    },
+    
+    // 渲染用户面板
+    renderUserPanel() {
+        const container = document.getElementById('userPanel');
+        if (!container) return;
+        
+        const user = this.getCurrentUser();
+        
+        if (user) {
+            // 已登录状态
+            container.innerHTML = `
+                <div class="user-avatar-lg">
+                    <img src="${user.avatar}" alt="${user.username}">
+                </div>
+                <h3>${user.username}</h3>
+                <p class="user-bio">${user.bio || '还没有个人简介'}</p>
+                <div class="user-stats">
+                    <span>帖子: ${user.posts.length}</span>
+                    <span>粉丝: ${user.followers.length}</span>
+                </div>
+                <div class="user-actions">
+                    <button onclick="CommunitySystem.logout()" class="btn btn-outline">退出登录</button>
+                </div>
+            `;
+        } else {
+            // 未登录状态
+            container.innerHTML = `
+                <div class="auth-prompt">
+                    <h3>加入社区</h3>
+                    <p>登录后可以发布帖子、评论互动</p>
+                    <div class="auth-buttons">
+                        <button onclick="CommunitySystem.showAuthModal('login')" class="btn btn-outline">登录</button>
+                        <button onclick="CommunitySystem.showAuthModal('register')" class="btn btn-primary">注册</button>
+                    </div>
+                </div>
+            `;
+        }
+    },
+    
+    // 显示登录/注册模态框
+    showAuthModal(type = 'login') {
+        const modal = document.getElementById('authModal');
+        const modalContent = modal.querySelector('.modal-content') || modal;
+        
+        if (type === 'login') {
+            modalContent.innerHTML = `
+                <div class="auth-form">
+                    <h2>用户登录</h2>
+                    <form onsubmit="return CommunitySystem.handleLogin(event)">
+                        <div class="form-group">
+                            <input type="text" 
+                                   placeholder="用户名或邮箱" 
+                                   class="form-input"
+                                   id="authUsername"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" 
+                                   placeholder="密码" 
+                                   class="form-input"
+                                   id="authPassword"
+                                   required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">登录</button>
+                    </form>
+                    <p class="auth-switch">
+                        还没有账号？ 
+                        <a href="#" onclick="CommunitySystem.showAuthModal('register')">立即注册</a>
+                    </p>
+                </div>
+            `;
+        } else {
+            modalContent.innerHTML = `
+                <div class="auth-form">
+                    <h2>用户注册</h2>
+                    <form onsubmit="return CommunitySystem.handleRegister(event)">
+                        <div class="form-group">
+                            <input type="text" 
+                                   placeholder="用户名" 
+                                   class="form-input"
+                                   id="regUsername"
+                                   minlength="3"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" 
+                                   placeholder="邮箱" 
+                                   class="form-input"
+                                   id="regEmail"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" 
+                                   placeholder="密码" 
+                                   class="form-input"
+                                   id="regPassword"
+                                   minlength="6"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="个人简介（可选）" 
+                                      class="form-input"
+                                      id="regBio"
+                                      rows="2"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">注册</button>
+                    </form>
+                    <p class="auth-switch">
+                        已有账号？ 
+                        <a href="#" onclick="CommunitySystem.showAuthModal('login')">立即登录</a>
+                    </p>
+                </div>
+            `;
+        }
+        
+        // 显示模态框
+        modal.style.display = 'block';
+        
+        // 点击模态框外部关闭
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    },
+    
+    // 处理登录表单
+    handleLogin(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('authUsername').value;
+        const password = document.getElementById('authPassword').value;
+        
+        try {
+            this.login(username, password);
+            alert('登录成功！');
+            
+            // 关闭模态框
+            document.getElementById('authModal').style.display = 'none';
+            
+            // 重新加载页面内容
+            this.renderUserPanel();
+            this.updateCommunityStats();
+            this.loadPageSpecificContent();
+        } catch (error) {
+            alert(error.message);
+        }
+    },
+    
+    // 处理注册表单
+    handleRegister(event) {
+        event.preventDefault();
+        
+        const userData = {
+            username: document.getElementById('regUsername').value,
+            email: document.getElementById('regEmail').value,
+            password: document.getElementById('regPassword').value,
+            bio: document.getElementById('regBio').value
+        };
+        
+        try {
+            this.register(userData);
+            alert('注册成功！');
+            
+            // 关闭模态框
+            document.getElementById('authModal').style.display = 'none';
+            
+            // 重新加载页面内容
+            this.renderUserPanel();
+            this.updateCommunityStats();
+            this.loadPageSpecificContent();
+        } catch (error) {
+            alert(error.message);
+        }
+    },
+    
+    // 用户注册（保持原功能）
     register(userData) {
         const users = this.getUsers();
         
-        // 检查用户名和邮箱是否已存在
         if (users.some(u => u.username === userData.username)) {
             throw new Error('用户名已存在');
         }
@@ -170,7 +533,7 @@ const CommunitySystem = {
         return newUser;
     },
     
-    // 用户登录
+    // 用户登录（保持原功能）
     login(username, password) {
         const users = this.getUsers();
         const user = users.find(u => 
@@ -182,11 +545,9 @@ const CommunitySystem = {
             throw new Error('用户名或密码错误');
         }
         
-        // 更新最后活跃时间
         user.lastActive = new Date().toISOString();
         this.saveUsers(users);
         
-        // 保存登录状态
         const session = {
             userId: user.id,
             loginTime: new Date().toISOString(),
@@ -194,23 +555,22 @@ const CommunitySystem = {
         };
         
         localStorage.setItem('community_session', JSON.stringify(session));
-        
-        // 更新UI
-        this.renderUserPanel();
-        this.updateCommunityStats();
-        this.loadOnlineUsers();
-        
         return user;
     },
     
-    // 用户登出
+    // 用户登出（保持原功能）
     logout() {
         localStorage.removeItem('community_session');
+        
+        // 重新加载页面内容
         this.renderUserPanel();
-        this.loadOnlineUsers();
+        this.updateCommunityStats();
+        this.loadPageSpecificContent();
+        
+        alert('已退出登录');
     },
     
-    // 获取当前用户
+    // 获取当前用户（保持原功能）
     getCurrentUser() {
         const session = JSON.parse(localStorage.getItem('community_session') || 'null');
         if (!session) return null;
@@ -219,453 +579,17 @@ const CommunitySystem = {
         return users.find(u => u.id === session.userId);
     },
     
-    // 检查登录状态
+    // 检查登录状态（保持原功能）
     checkLoginStatus() {
         const user = this.getCurrentUser();
         if (user) {
-            // 更新用户最后活跃时间
             user.lastActive = new Date().toISOString();
             this.saveUsers(this.getUsers());
         }
         return !!user;
     },
     
-    // 发布帖子
-    publishPost(content, tags = []) {
-        const user = this.getCurrentUser();
-        if (!user) {
-            alert('请先登录才能发布帖子');
-            this.showAuthForm('login');
-            return null;
-        }
-        
-        if (!content.trim()) {
-            alert('请填写帖子内容');
-            return null;
-        }
-        
-        const posts = this.getPosts();
-        const newPost = {
-            id: Date.now(),
-            userId: user.id,
-            content: content.trim(),
-            tags: tags,
-            timestamp: new Date().toISOString(),
-            likes: [],
-            comments: []
-        };
-        
-        posts.unshift(newPost);
-        this.savePosts(posts);
-        
-        // 更新用户的帖子列表
-        user.posts.push(newPost.id);
-        this.saveUsers(this.getUsers());
-        
-        // 重新加载帖子
-        this.loadPosts();
-        this.updateCommunityStats();
-        
-        return newPost;
-    },
-    
-    // 点赞/取消点赞
-    toggleLike(postId) {
-        const user = this.getCurrentUser();
-        if (!user) {
-            alert('请先登录才能点赞');
-            return false;
-        }
-        
-        const posts = this.getPosts();
-        const post = posts.find(p => p.id === postId);
-        
-        if (!post) return false;
-        
-        const index = post.likes.indexOf(user.id);
-        if (index === -1) {
-            post.likes.push(user.id);
-        } else {
-            post.likes.splice(index, 1);
-        }
-        
-        this.savePosts(posts);
-        return true;
-    },
-    
-    // 添加评论
-    addComment(postId, content) {
-        const user = this.getCurrentUser();
-        if (!user) {
-            alert('请先登录才能评论');
-            return null;
-        }
-        
-        if (!content.trim()) {
-            alert('请填写评论内容');
-            return null;
-        }
-        
-        const comments = this.getComments();
-        const newComment = {
-            id: Date.now(),
-            postId: postId,
-            userId: user.id,
-            content: content.trim(),
-            timestamp: new Date().toISOString()
-        };
-        
-        comments.push(newComment);
-        this.saveComments(comments);
-        
-        // 更新帖子的评论列表
-        const posts = this.getPosts();
-        const post = posts.find(p => p.id === postId);
-        if (post) {
-            post.comments.push(newComment.id);
-            this.savePosts(posts);
-        }
-        
-        this.updateCommunityStats();
-        return newComment;
-    },
-    
-    // 获取帖子评论
-    getPostComments(postId) {
-        const comments = this.getComments();
-        const postComments = comments.filter(c => c.postId === postId);
-        
-        // 按时间排序（最新的在前）
-        return postComments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    },
-    
-    // 加载帖子
-    loadPosts() {
-        const posts = this.getPosts();
-        const users = this.getUsers();
-        const container = document.getElementById('postsContainer');
-        
-        if (!container) return;
-        
-        if (posts.length === 0) {
-            container.innerHTML = `
-                <div class="post-card">
-                    <div class="empty-state">
-                        <h3>还没有帖子</h3>
-                        <p>快来第一个发帖吧！</p>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-        
-        // 按时间排序（最新的在前）
-        posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        
-        container.innerHTML = posts.map(post => {
-            const author = users.find(u => u.id === post.userId);
-            const commentCount = post.comments.length;
-            const likeCount = post.likes.length;
-            const currentUser = this.getCurrentUser();
-            const isLiked = currentUser ? post.likes.includes(currentUser.id) : false;
-            
-            return `
-                <div class="post-card" data-post-id="${post.id}">
-                    <div class="post-header">
-                        <img src="${author?.avatar || 'https://ui-avatars.com/api/?name=User'}" 
-                             alt="${author?.username || '用户'}" 
-                             class="post-avatar">
-                        <div class="post-meta">
-                            <div class="post-author">${author?.username || '未知用户'}</div>
-                            <div class="post-time">${this.formatTime(post.timestamp)}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="post-content">${this.formatPostContent(post.content)}</div>
-                    
-                    ${post.tags.length > 0 ? `
-                        <div class="post-tags">
-                            ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                        </div>
-                    ` : ''}
-                    
-                    <div class="post-footer">
-                        <div class="post-actions-sm">
-                            <button class="action-btn ${isLiked ? 'liked' : ''}" 
-                                    onclick="CommunitySystem.toggleLike(${post.id})">
-                                <i class="fas fa-heart"></i>
-                                <span>${likeCount}</span>
-                            </button>
-                            <button class="action-btn" onclick="CommunitySystem.showComments(${post.id})">
-                                <i class="fas fa-comment"></i>
-                                <span>${commentCount}</span>
-                            </button>
-                        </div>
-                        <div class="comment-count">${commentCount} 条评论</div>
-                    </div>
-                    
-                    <div class="comments-section" id="comments-${post.id}" style="display: none;">
-                        <div class="comment-form">
-                            <input type="text" 
-                                   class="comment-input" 
-                                   placeholder="写下你的评论..."
-                                   id="comment-input-${post.id}">
-                            <button class="button small" 
-                                    onclick="CommunitySystem.submitComment(${post.id})">发送</button>
-                        </div>
-                        <div class="comment-list" id="comment-list-${post.id}"></div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    },
-    
-    // 加载在线用户
-    loadOnlineUsers() {
-        const container = document.getElementById('onlineUsersList');
-        if (!container) return;
-        
-        const users = this.getUsers();
-        
-        // 按最后活跃时间排序，取前5个
-        const onlineUsers = users
-            .sort((a, b) => new Date(b.lastActive) - new Date(a.lastActive))
-            .slice(0, 5);
-        
-        container.innerHTML = onlineUsers.map(user => `
-            <div class="user-item-sm">
-                <img src="${user.avatar}" alt="${user.username}" class="user-avatar-sm">
-                <div class="user-info-sm">
-                    <strong>${user.username}</strong>
-                    <small>${user.posts.length} 篇帖子</small>
-                </div>
-            </div>
-        `).join('');
-    },
-    
-    // 更新社区统计
-    updateCommunityStats() {
-        const users = this.getUsers();
-        const posts = this.getPosts();
-        const comments = this.getComments();
-        
-        document.getElementById('totalUsers').textContent = users.length;
-        document.getElementById('totalPosts').textContent = posts.length;
-        document.getElementById('totalComments').textContent = comments.length;
-    },
-    
-    // 渲染用户面板
-    renderUserPanel() {
-        const container = document.getElementById('userPanel');
-        if (!container) return;
-        
-        const user = this.getCurrentUser();
-        
-        if (user) {
-            // 已登录状态
-            container.innerHTML = `
-                <div class="user-avatar-lg">
-                    <img src="${user.avatar}" alt="${user.username}">
-                </div>
-                <h3>${user.username}</h3>
-                <p class="user-bio">${user.bio || '还没有个人简介'}</p>
-                <div class="user-stats">
-                    <span>帖子: ${user.posts.length}</span>
-                    <span>粉丝: ${user.followers.length}</span>
-                </div>
-                <div class="user-actions">
-                    <button onclick="CommunitySystem.logout()" class="button">退出登录</button>
-                </div>
-            `;
-            
-            // 显示发布框
-            document.getElementById('newPostCard').style.display = 'block';
-            document.getElementById('publishBtn').disabled = false;
-        } else {
-            // 未登录状态
-            container.innerHTML = `
-                <h3>加入社区</h3>
-                <p>登录后可以发布帖子、评论互动</p>
-                <div class="auth-buttons">
-                    <button onclick="CommunitySystem.showAuthForm('login')" class="button">登录</button>
-                    <button onclick="CommunitySystem.showAuthForm('register')" class="button primary">注册</button>
-                </div>
-            `;
-            
-            // 隐藏发布框
-            document.getElementById('newPostCard').style.display = 'none';
-        }
-    },
-    
-    // 显示登录/注册表单
-    showAuthForm(type = 'login') {
-        const container = document.getElementById('userPanel');
-        if (!container) return;
-        
-        if (type === 'login') {
-            container.innerHTML = `
-                <h3>用户登录</h3>
-                <form onsubmit="return CommunitySystem.handleLogin(event)">
-                    <input type="text" 
-                           placeholder="用户名或邮箱" 
-                           class="auth-input"
-                           id="authUsername"
-                           required>
-                    <input type="password" 
-                           placeholder="密码" 
-                           class="auth-input"
-                           id="authPassword"
-                           required>
-                    <button type="submit" class="button primary btn-block">登录</button>
-                </form>
-                <p style="margin-top: 10px; text-align: center;">
-                    还没有账号？ 
-                    <a href="#" onclick="CommunitySystem.showAuthForm('register')">立即注册</a>
-                </p>
-            `;
-        } else {
-            container.innerHTML = `
-                <h3>用户注册</h3>
-                <form onsubmit="return CommunitySystem.handleRegister(event)">
-                    <input type="text" 
-                           placeholder="用户名" 
-                           class="auth-input"
-                           id="regUsername"
-                           minlength="3"
-                           required>
-                    <input type="email" 
-                           placeholder="邮箱" 
-                           class="auth-input"
-                           id="regEmail"
-                           required>
-                    <input type="password" 
-                           placeholder="密码" 
-                           class="auth-input"
-                           id="regPassword"
-                           minlength="6"
-                           required>
-                    <textarea placeholder="个人简介（可选）" 
-                              class="auth-input"
-                              id="regBio"
-                              rows="2"></textarea>
-                    <button type="submit" class="button primary btn-block">注册</button>
-                </form>
-                <p style="margin-top: 10px; text-align: center;">
-                    已有账号？ 
-                    <a href="#" onclick="CommunitySystem.showAuthForm('login')">立即登录</a>
-                </p>
-            `;
-        }
-    },
-    
-    // 处理登录表单
-    handleLogin(event) {
-        event.preventDefault();
-        
-        const username = document.getElementById('authUsername').value;
-        const password = document.getElementById('authPassword').value;
-        
-        try {
-            CommunitySystem.login(username, password);
-            alert('登录成功！');
-        } catch (error) {
-            alert(error.message);
-        }
-    },
-    
-    // 处理注册表单
-    handleRegister(event) {
-        event.preventDefault();
-        
-        const userData = {
-            username: document.getElementById('regUsername').value,
-            email: document.getElementById('regEmail').value,
-            password: document.getElementById('regPassword').value,
-            bio: document.getElementById('regBio').value
-        };
-        
-        try {
-            CommunitySystem.register(userData);
-            alert('注册成功！');
-        } catch (error) {
-            alert(error.message);
-        }
-    },
-    
-    // 显示/隐藏评论
-    showComments(postId) {
-        const section = document.getElementById(`comments-${postId}`);
-        const list = document.getElementById(`comment-list-${postId}`);
-        
-        if (section.style.display === 'none') {
-            section.style.display = 'block';
-            this.loadComments(postId, list);
-        } else {
-            section.style.display = 'none';
-        }
-    },
-    
-    // 加载评论
-    loadComments(postId, container) {
-        const comments = this.getPostComments(postId);
-        const users = this.getUsers();
-        
-        container.innerHTML = comments.map(comment => {
-            const author = users.find(u => u.id === comment.userId);
-            return `
-                <div class="comment-item">
-                    <img src="${author?.avatar || 'https://ui-avatars.com/api/?name=User'}" 
-                         alt="${author?.username || '用户'}" 
-                         class="comment-avatar">
-                    <div class="comment-content">
-                        <div>
-                            <span class="comment-author">${author?.username || '未知用户'}</span>
-                            <span class="comment-time">${this.formatTime(comment.timestamp)}</span>
-                        </div>
-                        <div class="comment-text">${comment.content}</div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    },
-    
-    // 提交评论
-    submitComment(postId) {
-        const input = document.getElementById(`comment-input-${postId}`);
-        const content = input.value.trim();
-        
-        if (content) {
-            this.addComment(postId, content);
-            input.value = '';
-            
-            // 重新加载评论
-            const list = document.getElementById(`comment-list-${postId}`);
-            this.loadComments(postId, list);
-            
-            // 更新帖子评论数
-            this.loadPosts();
-        }
-    },
-    
-    // 发布新帖子
-    publishPost() {
-        const content = document.getElementById('newPostContent').value.trim();
-        
-        if (content) {
-            this.publishPost(content);
-            document.getElementById('newPostContent').value = '';
-            alert('帖子发布成功！');
-        } else {
-            alert('请填写帖子内容');
-        }
-    },
-    
-    // 清空帖子
-    clearPost() {
-        document.getElementById('newPostContent').value = '';
-    },
-    
-    // 数据存储辅助方法
+    // 数据存储辅助方法（保持原功能）
     getUsers() {
         return JSON.parse(localStorage.getItem(this.STORAGE_KEYS.USERS) || '[]');
     },
@@ -704,16 +628,18 @@ const CommunitySystem = {
         return date.toLocaleDateString('zh-CN');
     },
     
+    truncateText(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    },
+    
     formatPostContent(content) {
-        // 简单的格式化：换行转<br>，URL转链接
         return content
             .replace(/\n/g, '<br>')
             .replace(/https?:\/\/[^\s]+/g, url => `<a href="${url}" target="_blank">${url}</a>`);
     },
     
     hashPassword(password) {
-        // 注意：实际应用中要用更安全的哈希算法
-        // 这里仅为演示，使用简单编码
         return btoa(password);
     },
     
