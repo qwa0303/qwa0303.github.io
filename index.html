@@ -32,12 +32,15 @@
         </div>
     </nav>
 
-    <!-- 社区英雄区 -->
+        <!-- 社区英雄区 -->
     <section class="community-hero">
         <div class="container">
             <div class="hero-content">
                 <h1>欢迎来到编程学习社区</h1>
                 <p class="hero-subtitle">一个开放、友好的技术交流平台，与志同道合的人一起成长</p>
+                
+                <!-- 移除统计数据区域 -->
+                <!-- 
                 <div class="hero-stats">
                     <div class="stat">
                         <strong id="totalMembers">1,234</strong>
@@ -52,8 +55,10 @@
                         <span>今日活跃</span>
                     </div>
                 </div>
+                -->
+                
                 <div class="hero-actions">
-                    <button class="btn btn-primary btn-large" onclick="CommunitySystem.showAuthForm('register')">
+                    <button class="btn btn-primary btn-large" onclick="CommunitySystem.showAuthModal('register')">
                         加入社区
                     </button>
                     <a href="personal.html" class="btn btn-outline btn-large">
