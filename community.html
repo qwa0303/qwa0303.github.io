@@ -1,0 +1,95 @@
+<!-- 在项目根目录创建 community.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>技术社区 | GJY的博客</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/community.css">
+</head>
+<body class="is-preload">
+    <!-- 导航栏（与首页相同） -->
+    <nav id="nav">
+        <ul class="container">
+            <li><a href="index.html">个人主页</a></li>
+            <li><a href="community.html">技术社区</a></li>
+            <li><a href="index.html#portfolio">我的项目</a></li>
+            <li><a href="index.html#contact">联系</a></li>
+        </ul>
+    </nav>
+
+    <!-- 社区头部 -->
+    <article id="top" class="wrapper style1">
+        <div class="container">
+            <header>
+                <h1>👥 技术社区</h1>
+                <p>欢迎来到我们的学习交流社区！这里可以分享文章、交流技术、互相学习</p>
+            </header>
+        </div>
+    </article>
+
+    <!-- 社区主内容 -->
+    <article class="wrapper style2">
+        <div class="container">
+            <div class="row">
+                <!-- 用户注册/登录侧边栏 -->
+                <div class="col-4 col-12-medium">
+                    <div class="community-sidebar">
+                        <div class="user-panel" id="userPanel">
+                            <!-- 用户信息或登录表单会动态显示 -->
+                        </div>
+                        
+                        <div class="community-stats">
+                            <h3>📊 社区数据</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <strong id="totalUsers">0</strong>
+                                    <span>注册用户</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong id="totalPosts">0</strong>
+                                    <span>社区文章</span>
+                                </div>
+                                <div class="stat-item">
+                                    <strong id="totalComments">0</strong>
+                                    <span>互动评论</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="online-users">
+                            <h3>👥 在线用户</h3>
+                            <div id="onlineUsersList">
+                                <!-- 在线用户列表 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 社区内容区 -->
+                <div class="col-8 col-12-medium">
+                    <div class="community-main">
+                        <!-- 发布新帖 -->
+                        <div class="new-post-card" id="newPostCard">
+                            <textarea placeholder="分享你的想法或问题..." id="newPostContent"></textarea>
+                            <div class="post-actions">
+                                <button onclick="publishPost()" class="button primary" id="publishBtn">发布</button>
+                                <button onclick="clearPost()" class="button">清空</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 帖子列表 -->
+                        <div class="posts-container" id="postsContainer">
+                            <!-- 社区帖子会动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <!-- 脚本引入 -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/community.js"></script>
+    <script src="assets/js/user-system.js"></script>
+</body>
+</html>
