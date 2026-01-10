@@ -70,68 +70,60 @@
     </section>
 
     <!-- 社区内容区 -->
-    <main class="container">
-        <div class="row">
-            <!-- 左侧：热门内容 -->
-            <div class="col-8">
-                <section class="community-section">
-                    <h2>🔥 热门讨论</h2>
-                    <div class="posts-container" id="hotPosts">
-                        <!-- 热门帖子动态加载 -->
-                    </div>
-                </section>
-                
-                <section class="community-section">
-                    <h2>📝 最新文章</h2>
-                    <div class="articles-container" id="newArticles">
-                        <!-- 最新文章动态加载 -->
-                    </div>
-                </section>
-            </div>
+<main class="container">
+    <div class="row">
+        <!-- 左侧：热门内容 -->
+        <div class="col-8">
+            <!-- 文章区域 -->
+            <section id="articles" class="community-section">
+                <h2>📚 技术文章</h2>
+                <div class="posts-container" id="articlesContainer">
+                    <!-- 文章列表动态加载 -->
+                </div>
+            </section>
             
-            <!-- 右侧：社区信息 -->
-            <div class="col-4">
-                <div class="community-sidebar">
-                    <!-- 用户面板 -->
-                    <div class="user-panel" id="userPanel">
-                        <!-- 动态显示登录状态 -->
+            <!-- 问答区域 -->
+            <section id="questions" class="community-section">
+                <h2>❓ 技术问答</h2>
+                <div class="posts-container" id="questionsContainer">
+                    <!-- 问答列表动态加载 -->
+                </div>
+            </section>
+            
+            <!-- 项目区域 -->
+            <section id="projects" class="community-section">
+                <h2>🚀 开源项目</h2>
+                <div class="projects-container" id="projectsContainer">
+                    <!-- 项目列表动态加载 -->
+                </div>
+            </section>
+            
+            <!-- 关于区域 -->
+            <section id="about" class="community-section">
+                <h2>👥 关于社区</h2>
+                <div class="about-content">
+                    <div class="about-card">
+                        <h3>🎯 社区使命</h3>
+                        <p>我们致力于创建一个开放、友好的编程学习环境，帮助开发者互相学习、共同成长。</p>
                     </div>
-                    
-                    <!-- 在线用户 -->
-                    <div class="sidebar-widget">
-                        <h3>👥 在线用户</h3>
-                        <div class="online-users" id="onlineUsers">
-                            <!-- 在线用户列表 -->
-                        </div>
+                    <div class="about-card">
+                        <h3>📈 发展方向</h3>
+                        <p>计划构建完整的在线学习系统，包括技术文章、开源项目、在线问答、代码分享等功能。</p>
                     </div>
-                    
-                    <!-- 社区规则 -->
-                    <div class="sidebar-widget">
-                        <h3>📜 社区准则</h3>
-                        <ul class="community-rules">
-                            <li>🤝 尊重他人，友善交流</li>
-                            <li>💡 分享知识，共同成长</li>
-                            <li>🚫 禁止广告、恶意攻击</li>
-                            <li>🔒 保护隐私，安全第一</li>
-                        </ul>
-                    </div>
-                    
-                    <!-- 特别推荐 -->
-                    <div class="sidebar-widget featured-profile">
-                        <h3>⭐ 特别推荐</h3>
-                        <div class="featured-user">
-                            <img src="images/pic00.jpg" alt="GJY" class="featured-avatar">
-                            <div class="featured-info">
-                                <h4>GJY</h4>
-                                <p>计算机专业学生，热爱编程与分享</p>
-                                <a href="personal.html" class="btn btn-small">访问主页</a>
-                            </div>
-                        </div>
+                    <div class="about-card">
+                        <h3>🤝 加入我们</h3>
+                        <p>无论你是初学者还是资深开发者，都欢迎加入我们的社区，分享你的知识和经验。</p>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-    </main>
+        
+        <!-- 右侧：社区信息 -->
+        <div class="col-4">
+            <!-- 保留原有的侧边栏内容 -->
+        </div>
+    </div>
+</main>
 
     <!-- 页脚 -->
     <footer class="community-footer">
