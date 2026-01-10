@@ -21,7 +21,9 @@ const CommunitySystem = {
         if (!localStorage.getItem(this.STORAGE_KEYS.USERS)) {
             this.initializeSampleData();
         }
-        
+        // 初始化登录/注册按钮（新增）
+        this.initAuthButtons();
+    
         // 检查登录状态
         this.checkLoginStatus();
         
@@ -68,6 +70,23 @@ const CommunitySystem = {
         
         console.log('社区数据已初始化：空数据状态');
     },
+    initAuthButtons() {
+    // 绑定导航栏的登录/注册按钮
+    const navAuthBtn = document.querySelector('.nav-actions .btn-outline');
+    if (navAuthBtn && !navAuthBtn.onclick) {
+        navAuthBtn.addEventListener('click', () => {
+            this.showAuthModal('login');
+        });
+    }
+    
+    // 绑定英雄区的加入社区按钮
+    const heroAuthBtn = document.querySelector('.hero-actions .btn-primary');
+    if (heroAuthBtn && heroAuthBtn.textContent.includes('加入社区') && !heroAuthBtn.onclick) {
+        heroAuthBtn.addEventListener('click', () => {
+            this.showAuthModal('register');
+        });
+    }
+},
            
     // 加载页面特定内容
     loadPageSpecificContent() {
