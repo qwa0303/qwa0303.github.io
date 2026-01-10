@@ -89,6 +89,19 @@ const CommunitySystem = {
             this.loadPosts();
         }
         
+        // 新增：文章、问答、项目区域
+        if (document.getElementById('articlesContainer')) {
+            this.loadArticles();
+        }
+        
+        if (document.getElementById('questionsContainer')) {
+            this.loadQuestions();
+        }
+        
+        if (document.getElementById('projectsContainer')) {
+            this.loadProjects();
+        }
+        
         // 搜索页面
         if (document.getElementById('searchResults')) {
             // 如果有搜索关键词参数，显示搜索结果
@@ -575,6 +588,179 @@ const CommunitySystem = {
                 </div>
             `;
         }).join('');
+    },
+    
+    // ========== 新增功能：加载文章 ==========
+    loadArticles() {
+        const posts = this.getPosts();
+        const users = this.getUsers();
+        const container = document.getElementById('articlesContainer');
+        
+        if (!container) return;
+        
+        // 筛选文章类型（可以根据标签或内容判断）
+        const articles = posts.filter(post => 
+            post.tags.includes('文章') || 
+            post.content.length > 200 // 较长的内容视为文章
+        );
+        
+        if (articles.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📝</div>
+                    <h3>暂无技术文章</h3>
+                    <p>快来发布第一篇文章，分享你的技术见解！</p>
+                    <button onclick="CommunitySystem.showCreatePostModal()" class="btn btn-primary">
+                        发布文章
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        // 按时间排序（最新的在前）
+        articles.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        container.innerHTML = articles.map(post => {
+            const author = users.find(u => u.id === post.userId);
+            const commentCount = post.comments.length;
+            const likeCount = post.likes.length;
+            
+            return `
+                <div class="post-item">
+                    <div class="post-header">
+                        <img src="${author?.avatar || 'https://ui-avatars.com/api/?name=User'}" 
+                             alt="${author?.username || '用户'}" 
+                             class="post-avatar">
+                        <div class="post-meta">
+                            <div class="post-author">${author?.username || '未知用户'}</div>
+                            <div class="post-time">${this.formatTime(post.timestamp)}</div>
+                        </div>
+                    </div>
+                    <h4 class="article-title">${this.truncateText(post.content.split('\n')[0], 60)}</h4>
+                    <div class="post-content-short">${this.truncateText(post.content, 150)}</div>
+                    <div class="post-stats">
+                        <span class="stat-item">👍 ${likeCount}</span>
+                        <span class="stat-item">💬 ${commentCount}</span>
+                        <span class="stat-item">👁️ ${post.views || 0}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+    
+    // ========== 新增功能：加载问答 ==========
+    loadQuestions() {
+        const posts = this.getPosts();
+        const users = this.getUsers();
+        const container = document.getElementById('questionsContainer');
+        
+        if (!container) return;
+        
+        // 筛选问答类型
+        const questions = posts.filter(post => 
+            post.tags.includes('问答') || 
+            post.tags.includes('问题') ||
+            post.content.includes('？') ||
+            post.content.includes('?')
+        );
+        
+        if (questions.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">❓</div>
+                    <h3>暂无技术问答</h3>
+                    <p>有技术问题？快来提问吧！</p>
+                    <button onclick="CommunitySystem.showCreatePostModal()" class="btn btn-primary">
+                        提出问题
+                    </button>
+                </div>
+            `;
+            return;
+        }
+        
+        // 按时间排序（最新的在前）
+        questions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        container.innerHTML = questions.map(post => {
+            const author = users.find(u => u.id === post.userId);
+            const commentCount = post.comments.length;
+            const likeCount = post.likes.length;
+            
+            return `
+                <div class="post-item">
+                    <div class="post-header">
+                        <img src="${author?.avatar || 'https://ui-avatars.com/api/?name=User'}" 
+                             alt="${author?.username || '用户'}" 
+                             class="post-avatar">
+                        <div class="post-meta">
+                            <div class="post-author">${author?.username || '未知用户'}</div>
+                            <div class="post-time">${this.formatTime(post.timestamp)}</div>
+                        </div>
+                    </div>
+                    <div class="post-content-short">
+                        <strong>问题：</strong>${this.truncateText(post.content, 100)}
+                    </div>
+                    <div class="post-stats">
+                        <span class="stat-item">👍 ${likeCount}</span>
+                        <span class="stat-item">💬 ${commentCount}</span>
+                        <span class="stat-item">👁️ ${post.views || 0}</span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    },
+    
+    // ========== 新增功能：加载项目 ==========
+    loadProjects() {
+        const container = document.getElementById('projectsContainer');
+        if (!container) return;
+        
+        // 示例项目数据
+        const projects = [
+            {
+                id: 1,
+                title: "CodeHub 社区系统",
+                description: "基于HTML5UP模板构建的编程学习社区，包含用户系统、帖子管理、评论互动等功能。",
+                tech: ["HTML5", "CSS3", "JavaScript", "LocalStorage"],
+                github: "https://github.com/qwa0303",
+                demo: "index.html"
+            },
+            {
+                id: 2,
+                title: "个人博客系统",
+                description: "基于Miniport模板的个人技术博客，支持文章展示、项目展示、联系方式等功能。",
+                tech: ["HTML5", "CSS3", "JavaScript"],
+                github: "https://github.com/qwa0303",
+                demo: "personal.html"
+            },
+            {
+                id: 3,
+                title: "技术学习笔记",
+                description: "整理和分享编程学习过程中的笔记和心得，涵盖Python、C++、前端开发等方向。",
+                tech: ["Python", "C++", "前端开发"],
+                github: "https://github.com/qwa0303",
+                demo: "#"
+            }
+        ];
+        
+        container.innerHTML = projects.map(project => `
+            <div class="project-card">
+                <h4 class="project-title">${project.title}</h4>
+                <p class="project-description">${project.description}</p>
+                <div class="project-tech">
+                    ${project.tech.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                </div>
+                <div class="project-links">
+                    <a href="${project.github}" target="_blank" class="project-link github">
+                        GitHub
+                    </a>
+                    <a href="${project.demo}" class="project-link">
+                        查看演示
+                    </a>
+                </div>
+            </div>
+        `).join('');
     },
     
     // 更新用户面板统计数据
