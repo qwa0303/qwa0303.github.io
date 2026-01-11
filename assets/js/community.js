@@ -8,13 +8,19 @@ const CommunitySystem = {
         SESSIONS: 'community_session'
     },
     
-    // 初始化数据
+     // 初始化数据
     init() {
         console.log('社区系统初始化开始...');
+        console.log('localStorage 容量检查:', 
+            `已使用 ${JSON.stringify(localStorage).length} 字节`);
+        
+        // 显示当前数据状态
+        this.debugUsers();
         
         // 初始化默认数据（如果不存在）
         if (!localStorage.getItem(this.STORAGE_KEYS.USERS) || 
             JSON.parse(localStorage.getItem(this.STORAGE_KEYS.USERS) || '[]').length === 0) {
+            console.log('初始化示例数据...');
             this.initializeSampleData();
         }
         
@@ -1293,7 +1299,7 @@ const CommunitySystem = {
         return true;
     },
     
-    // 用户注册
+       // 用户注册
     register(userData) {
         const users = this.getUsers();
         
@@ -1309,7 +1315,7 @@ const CommunitySystem = {
             id: Date.now(),
             username: userData.username,
             email: userData.email,
-            password: this.hashPassword(userData.password),
+            password: this.hashPassword(userData.password), // 使用修复后的哈希
             avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.username)}&background=${this.getRandomColor()}&color=fff`,
             bio: userData.bio || '还没有个人简介',
             joinDate: new Date().toISOString(),
@@ -1321,28 +1327,55 @@ const CommunitySystem = {
         };
         
         console.log('注册新用户:', newUser);
+        
+        // 保存用户到数组
         users.push(newUser);
         this.saveUsers(users);
         
-        this.login(userData.username, userData.password);
+        console.log('用户保存后，当前所有用户:', this.getUsers());
+        
+        // 创建会话
+        const session = {
+            userId: newUser.id,
+            loginTime: new Date().toISOString(),
+            token: this.generateToken(),
+            username: newUser.username
+        };
+        
+        console.log('创建会话:', session);
+        localStorage.setItem('community_session', JSON.stringify(session));
+        
+        // 更新用户的lastActive
+        this.saveUsers(users);
+        
         return newUser;
     },
     
-    // 用户登录
+        // 用户登录
     login(username, password) {
         const users = this.getUsers();
+        const hashedPassword = this.hashPassword(password); // 先哈希
+        
+        console.log('登录尝试:', { username, hashedPassword });
+        console.log('所有用户:', users);
+        
         const user = users.find(u => 
             (u.username === username || u.email === username) && 
-            u.password === this.hashPassword(password)
+            u.password === hashedPassword // 比较哈希值
         );
         
         if (!user) {
+            console.log('登录失败：未找到匹配的用户');
             throw new Error('用户名或密码错误');
         }
         
+        console.log('找到用户:', user);
+        
+        // 更新最后活动时间
         user.lastActive = new Date().toISOString();
         this.saveUsers(users);
         
+        // 创建会话
         const session = {
             userId: user.id,
             loginTime: new Date().toISOString(),
@@ -1352,6 +1385,7 @@ const CommunitySystem = {
         
         console.log('登录成功，保存会话:', session);
         localStorage.setItem('community_session', JSON.stringify(session));
+        
         return user;
     },
     
@@ -1562,8 +1596,10 @@ const CommunitySystem = {
             .replace(/https?:\/\/[^\s]+/g, url => `<a href="${url}" target="_blank">${url}</a>`);
     },
     
-    hashPassword(password) {
-        return btoa(password + 'SALT_KEY_' + Date.now());
+        hashPassword(password) {
+        // 使用固定的盐值，确保相同的密码哈希结果相同
+        const salt = 'COMMUNITY_SYSTEM_SALT_2024'; // 固定盐值
+        return btoa(password + salt);
     },
     
     generateToken() {
@@ -1583,6 +1619,47 @@ document.addEventListener('DOMContentLoaded', function() {
         CommunitySystem.init();
     } else {
         console.error('CommunitySystem未定义！');
+    }
+        // 调试函数：显示所有用户数据
+    debugUsers() {
+        console.log('=== 用户数据调试 ===');
+        const users = this.getUsers();
+        console.log(`总用户数: ${users.length}`);
+        
+        users.forEach((user, index) => {
+            console.log(`用户${index + 1}:`, {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                password: user.password, // 注意：这里会显示哈希后的密码
+                joinDate: user.joinDate,
+                hasPosts: user.posts ? user.posts.length : 0
+            });
+        });
+        
+        const session = localStorage.getItem('community_session');
+        console.log('当前会话:', session ? JSON.parse(session) : '无');
+        
+        // 在页面上也显示信息
+        const debugDiv = document.createElement('div');
+        debugDiv.style.cssText = 'position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.8);color:white;padding:10px;z-index:9999;font-size:12px;border-radius:5px;';
+        debugDiv.innerHTML = `
+            <strong>调试信息</strong><br>
+            用户数: ${users.length}<br>
+            当前用户: ${this.getCurrentUser() ? this.getCurrentUser().username : '未登录'}
+        `;
+        document.body.appendChild(debugDiv);
+        
+        return users;
+    },
+    
+    // 重置测试用户
+    resetTestUser() {
+        if (confirm('重置测试用户？这将删除所有数据！')) {
+            localStorage.clear();
+            alert('数据已清除，页面将刷新');
+            window.location.reload();
+        }
     }
 });
 
