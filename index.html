@@ -168,14 +168,19 @@
 
         <!-- 脚本 -->
     <script src="assets/js/community.js"></script>
-    <script>
-        // 页面加载时初始化社区
-        document.addEventListener('DOMContentLoaded', function() {
-            // 只需调用init，其他都在init内部处理了
-            if (typeof CommunitySystem !== 'undefined') {
-                CommunitySystem.init();
-            }
-        });
-    </script>
+   <script>
+    // 页面加载时初始化社区
+    document.addEventListener('DOMContentLoaded', function() {
+        CommunitySystem.init();
+        
+        // 更新统计数据
+        CommunitySystem.updateStats();
+        
+        // 加载热门内容
+        CommunitySystem.loadHotPosts();
+        CommunitySystem.loadNewArticles();
+        
+    });
+</script>
 </body>
 </html>
