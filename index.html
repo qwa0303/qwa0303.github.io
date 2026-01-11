@@ -166,21 +166,15 @@
         </div>
     </div>
 
-    <!-- 脚本 -->
+        <!-- 脚本 -->
     <script src="assets/js/community.js"></script>
     <script>
         // 页面加载时初始化社区
         document.addEventListener('DOMContentLoaded', function() {
-            CommunitySystem.init();
-            
-
-            
-            // 加载热门内容
-            CommunitySystem.loadHotPosts();
-            CommunitySystem.loadNewArticles();
-            
-            // 更新特别推荐
-            document.querySelector('.featured-user a').href = 'personal.html';
+            // 只需调用init，其他都在init内部处理了
+            if (typeof CommunitySystem !== 'undefined') {
+                CommunitySystem.init();
+            }
         });
     </script>
 </body>
