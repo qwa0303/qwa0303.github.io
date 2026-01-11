@@ -42,8 +42,7 @@ const CommunitySystem = {
         // 初始化发帖按钮
         this.initCreatePostButton();
         
-        // 显示调试信息
-        this.debugInfo();
+      
         
         console.log('社区系统初始化完成');
     },
@@ -1432,22 +1431,7 @@ const CommunitySystem = {
         }
     },
     
-    // 调试信息
-    debugInfo() {
-        console.log('=== 社区系统调试信息 ===');
-        console.log('localStorage 状态:');
-        console.log('- 用户数:', this.getUsers().length);
-        console.log('- 帖子数:', this.getPosts().length);
-        console.log('- 会话:', localStorage.getItem('community_session'));
-        
-        const currentUser = this.getCurrentUser();
-        if (currentUser) {
-            console.log('当前登录用户:', currentUser.username);
-        } else {
-            console.log('当前未登录');
-        }
-        
-        
+
     // 清理数据
     clearData() {
         if (confirm('确定要清除所有数据吗？这将删除所有用户和帖子。')) {
