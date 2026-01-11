@@ -8,14 +8,11 @@ const CommunitySystem = {
         SESSIONS: 'community_session'
     },
     
-     // 初始化数据
+    // 初始化数据
     init() {
         console.log('社区系统初始化开始...');
         console.log('localStorage 容量检查:', 
             `已使用 ${JSON.stringify(localStorage).length} 字节`);
-        
-        // 显示当前数据状态
-        this.debugUsers();
         
         // 初始化默认数据（如果不存在）
         if (!localStorage.getItem(this.STORAGE_KEYS.USERS) || 
@@ -842,7 +839,7 @@ const CommunitySystem = {
     },
     
     // 更新统计数据
-    updateStats: function() {
+    updateStats() {
         console.log('社区系统：更新统计数据...');
         
         try {
@@ -1299,7 +1296,7 @@ const CommunitySystem = {
         return true;
     },
     
-       // 用户注册
+    // 用户注册
     register(userData) {
         const users = this.getUsers();
         
@@ -1315,7 +1312,7 @@ const CommunitySystem = {
             id: Date.now(),
             username: userData.username,
             email: userData.email,
-            password: this.hashPassword(userData.password), // 使用修复后的哈希
+            password: this.hashPassword(userData.password),
             avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.username)}&background=${this.getRandomColor()}&color=fff`,
             bio: userData.bio || '还没有个人简介',
             joinDate: new Date().toISOString(),
@@ -1327,55 +1324,28 @@ const CommunitySystem = {
         };
         
         console.log('注册新用户:', newUser);
-        
-        // 保存用户到数组
         users.push(newUser);
         this.saveUsers(users);
         
-        console.log('用户保存后，当前所有用户:', this.getUsers());
-        
-        // 创建会话
-        const session = {
-            userId: newUser.id,
-            loginTime: new Date().toISOString(),
-            token: this.generateToken(),
-            username: newUser.username
-        };
-        
-        console.log('创建会话:', session);
-        localStorage.setItem('community_session', JSON.stringify(session));
-        
-        // 更新用户的lastActive
-        this.saveUsers(users);
-        
+        this.login(userData.username, userData.password);
         return newUser;
     },
     
-        // 用户登录
+    // 用户登录
     login(username, password) {
         const users = this.getUsers();
-        const hashedPassword = this.hashPassword(password); // 先哈希
-        
-        console.log('登录尝试:', { username, hashedPassword });
-        console.log('所有用户:', users);
-        
         const user = users.find(u => 
             (u.username === username || u.email === username) && 
-            u.password === hashedPassword // 比较哈希值
+            u.password === this.hashPassword(password)
         );
         
         if (!user) {
-            console.log('登录失败：未找到匹配的用户');
             throw new Error('用户名或密码错误');
         }
         
-        console.log('找到用户:', user);
-        
-        // 更新最后活动时间
         user.lastActive = new Date().toISOString();
         this.saveUsers(users);
         
-        // 创建会话
         const session = {
             userId: user.id,
             loginTime: new Date().toISOString(),
@@ -1385,7 +1355,6 @@ const CommunitySystem = {
         
         console.log('登录成功，保存会话:', session);
         localStorage.setItem('community_session', JSON.stringify(session));
-        
         return user;
     },
     
@@ -1396,7 +1365,7 @@ const CommunitySystem = {
         
         this.renderUserPanel();
         this.loadPageSpecificContent();
-        this.updateStats(); // 更新统计数据
+        this.updateStats();
         
         alert('已退出登录');
     },
@@ -1447,7 +1416,6 @@ const CommunitySystem = {
             if (!data) return [];
             
             const users = JSON.parse(data);
-            console.log('读取用户数据:', users.length, '个用户');
             return users;
         } catch (error) {
             console.error('读取用户数据失败:', error);
@@ -1457,7 +1425,6 @@ const CommunitySystem = {
     
     saveUsers(users) {
         try {
-            console.log('保存用户数据:', users.length, '个用户');
             localStorage.setItem(this.STORAGE_KEYS.USERS, JSON.stringify(users));
         } catch (error) {
             console.error('保存用户数据失败:', error);
@@ -1470,7 +1437,6 @@ const CommunitySystem = {
             if (!data) return [];
             
             const posts = JSON.parse(data);
-            console.log('读取帖子数据:', posts.length, '个帖子');
             return posts;
         } catch (error) {
             console.error('读取帖子数据失败:', error);
@@ -1480,7 +1446,6 @@ const CommunitySystem = {
     
     savePosts(posts) {
         try {
-            console.log('保存帖子数据:', posts.length, '个帖子');
             localStorage.setItem(this.STORAGE_KEYS.POSTS, JSON.stringify(posts));
         } catch (error) {
             console.error('保存帖子数据失败:', error);
@@ -1493,7 +1458,6 @@ const CommunitySystem = {
             if (!data) return [];
             
             const comments = JSON.parse(data);
-            console.log('读取评论数据:', comments.length, '条评论');
             return comments;
         } catch (error) {
             console.error('读取评论数据失败:', error);
@@ -1503,7 +1467,6 @@ const CommunitySystem = {
     
     saveComments(comments) {
         try {
-            console.log('保存评论数据:', comments.length, '条评论');
             localStorage.setItem(this.STORAGE_KEYS.COMMENTS, JSON.stringify(comments));
         } catch (error) {
             console.error('保存评论数据失败:', error);
@@ -1523,38 +1486,6 @@ const CommunitySystem = {
             console.log('当前登录用户:', currentUser.username);
         } else {
             console.log('当前未登录');
-        }
-        
-        // 添加调试按钮
-        if (!document.getElementById('debug-btn')) {
-            const debugBtn = document.createElement('button');
-            debugBtn.id = 'debug-btn';
-            debugBtn.textContent = '🔄 调试';
-            debugBtn.style.position = 'fixed';
-            debugBtn.style.bottom = '10px';
-            debugBtn.style.right = '10px';
-            debugBtn.style.zIndex = '9999';
-            debugBtn.style.padding = '5px 10px';
-            debugBtn.style.backgroundColor = '#f44336';
-            debugBtn.style.color = 'white';
-            debugBtn.style.border = 'none';
-            debugBtn.style.borderRadius = '4px';
-            debugBtn.style.cursor = 'pointer';
-            
-            debugBtn.onclick = () => {
-                this.debugInfo();
-                
-                // 显示数据详情
-                console.log('用户详情:', this.getUsers());
-                console.log('帖子详情:', this.getPosts());
-                
-                // 重新加载
-                this.loadPageSpecificContent();
-                this.renderUserPanel();
-                this.updateStats();
-            };
-            
-            document.body.appendChild(debugBtn);
         }
     },
     
@@ -1596,9 +1527,8 @@ const CommunitySystem = {
             .replace(/https?:\/\/[^\s]+/g, url => `<a href="${url}" target="_blank">${url}</a>`);
     },
     
-        hashPassword(password) {
-        // 使用固定的盐值，确保相同的密码哈希结果相同
-        const salt = 'COMMUNITY_SYSTEM_SALT_2024'; // 固定盐值
+    hashPassword(password) {
+        const salt = 'COMMUNITY_SYSTEM_SALT_2024';
         return btoa(password + salt);
     },
     
@@ -1612,7 +1542,6 @@ const CommunitySystem = {
     }
 };
 
-// 页面加载完成后初始化
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM加载完成，开始初始化社区系统...');
