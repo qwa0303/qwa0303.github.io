@@ -1447,38 +1447,7 @@ const CommunitySystem = {
             console.log('当前未登录');
         }
         
-        // 添加调试按钮
-        if (!document.getElementById('debug-btn')) {
-            const debugBtn = document.createElement('button');
-            debugBtn.id = 'debug-btn';
-            debugBtn.textContent = '🔄 调试';
-            debugBtn.style.position = 'fixed';
-            debugBtn.style.bottom = '10px';
-            debugBtn.style.right = '10px';
-            debugBtn.style.zIndex = '9999';
-            debugBtn.style.padding = '5px 10px';
-            debugBtn.style.backgroundColor = '#f44336';
-            debugBtn.style.color = 'white';
-            debugBtn.style.border = 'none';
-            debugBtn.style.borderRadius = '4px';
-            debugBtn.style.cursor = 'pointer';
-            
-            debugBtn.onclick = () => {
-                this.debugInfo();
-                
-                // 显示数据详情
-                console.log('用户详情:', this.getUsers());
-                console.log('帖子详情:', this.getPosts());
-                
-                // 重新加载
-                this.loadPageSpecificContent();
-                this.renderUserPanel();
-            };
-            
-            document.body.appendChild(debugBtn);
-        }
-    },
-    
+        
     // 清理数据
     clearData() {
         if (confirm('确定要清除所有数据吗？这将删除所有用户和帖子。')) {
