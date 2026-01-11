@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/community.css">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico.ico">
+    <!-- Font Awesome 图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <!-- 社区导航栏 -->
@@ -20,49 +22,36 @@
             </a>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">首页</a></li>
-                <li><a href="personal.html">我的主页</a></li>  <!-- 链接到你的个人页面 -->
+                <li><a href="personal.html">我的主页</a></li>
                 <li><a href="#articles">文章</a></li>
                 <li><a href="#questions">问答</a></li>
                 <li><a href="#projects">项目</a></li>
                 <li><a href="#about">关于</a></li>
+                <li><a href="community.html" class="community-link">💬 社区</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="btn btn-outline" onclick="CommunitySystem.showAuthModal()">登录/注册</button>
+                <!-- 动态显示登录/注册按钮或用户信息 -->
+                <div id="navUserInfo"></div>
             </div>
         </div>
     </nav>
 
-        <!-- 社区英雄区 -->
+    <!-- 社区英雄区 -->
     <section class="community-hero">
         <div class="container">
             <div class="hero-content">
                 <h1>欢迎来到编程学习社区</h1>
                 <p class="hero-subtitle">一个开放、友好的技术交流平台，与志同道合的人一起成长</p>
                 
-                <!-- 移除统计数据区域 -->
-                <!-- 
-                <div class="hero-stats">
-                    <div class="stat">
-                        <strong id="totalMembers">1,234</strong>
-                        <span>社区成员</span>
-                    </div>
-                    <div class="stat">
-                        <strong id="totalPosts">5,678</strong>
-                        <span>技术文章</span>
-                    </div>
-                    <div class="stat">
-                        <strong id="activeToday">89</strong>
-                        <span>今日活跃</span>
-                    </div>
-                </div>
-                -->
-                
-                <div class="hero-actions">
-                    <button class="btn btn-primary btn-large" onclick="CommunitySystem.showAuthModal('register')">
+                <div class="hero-actions" id="heroActions">
+                    <button class="btn btn-primary btn-large" onclick="HomeSystem.showAuthModal('register')">
                         加入社区
                     </button>
                     <a href="personal.html" class="btn btn-outline btn-large">
                         访问我的主页
+                    </a>
+                    <a href="community.html" class="btn btn-primary btn-large" id="communityBtn" style="display:none; margin-left:10px;">
+                        💬 去社区发帖
                     </a>
                 </div>
             </div>
@@ -70,60 +59,101 @@
     </section>
 
     <!-- 社区内容区 -->
-<main class="container">
-    <div class="row">
-        <!-- 左侧：热门内容 -->
-        <div class="col-8">
-            <!-- 文章区域 -->
-            <section id="articles" class="community-section">
-                <h2>📚 技术文章</h2>
-                <div class="posts-container" id="articlesContainer">
-                    <!-- 文章列表动态加载 -->
-                </div>
-            </section>
-            
-            <!-- 问答区域 -->
-            <section id="questions" class="community-section">
-                <h2>❓ 技术问答</h2>
-                <div class="posts-container" id="questionsContainer">
-                    <!-- 问答列表动态加载 -->
-                </div>
-            </section>
-            
-            <!-- 项目区域 -->
-            <section id="projects" class="community-section">
-                <h2>🚀 开源项目</h2>
-                <div class="projects-container" id="projectsContainer">
-                    <!-- 项目列表动态加载 -->
-                </div>
-            </section>
-            
-            <!-- 关于区域 -->
-            <section id="about" class="community-section">
-                <h2>👥 关于社区</h2>
-                <div class="about-content">
-                    <div class="about-card">
-                        <h3>🎯 社区使命</h3>
-                        <p>我们致力于创建一个开放、友好的编程学习环境，帮助开发者互相学习、共同成长。</p>
+    <main class="container">
+        <div class="row">
+            <!-- 左侧：热门内容 -->
+            <div class="col-8">
+                <!-- 文章区域 -->
+                <section id="articles" class="community-section">
+                    <h2>📚 技术文章</h2>
+                    <div class="posts-container" id="articlesContainer">
+                        <!-- 文章列表动态加载 -->
                     </div>
-                    <div class="about-card">
-                        <h3>📈 发展方向</h3>
-                        <p>计划构建完整的在线学习系统，包括技术文章、开源项目、在线问答、代码分享等功能。</p>
+                </section>
+                
+                <!-- 问答区域 -->
+                <section id="questions" class="community-section">
+                    <h2>❓ 技术问答</h2>
+                    <div class="posts-container" id="questionsContainer">
+                        <!-- 问答列表动态加载 -->
                     </div>
-                    <div class="about-card">
-                        <h3>🤝 加入我们</h3>
-                        <p>无论你是初学者还是资深开发者，都欢迎加入我们的社区，分享你的知识和经验。</p>
+                </section>
+                
+                <!-- 项目区域 -->
+                <section id="projects" class="community-section">
+                    <h2>🚀 开源项目</h2>
+                    <div class="projects-container" id="projectsContainer">
+                        <!-- 项目列表动态加载 -->
+                    </div>
+                </section>
+                
+                <!-- 关于区域 -->
+                <section id="about" class="community-section">
+                    <h2>👥 关于社区</h2>
+                    <div class="about-content">
+                        <div class="about-card">
+                            <h3>🎯 社区使命</h3>
+                            <p>我们致力于创建一个开放、友好的编程学习环境，帮助开发者互相学习、共同成长。</p>
+                        </div>
+                        <div class="about-card">
+                            <h3>📈 发展方向</h3>
+                            <p>计划构建完整的在线学习系统，包括技术文章、开源项目、在线问答、代码分享等功能。</p>
+                        </div>
+                        <div class="about-card">
+                            <h3>🤝 加入我们</h3>
+                            <p>无论你是初学者还是资深开发者，都欢迎加入我们的社区，分享你的知识和经验。</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- 右侧：社区信息 -->
+            <div class="col-4">
+                <!-- 用户面板 -->
+                <div id="userPanel" class="user-panel">
+                    <!-- 动态加载用户信息或登录提示 -->
+                </div>
+                
+                <!-- 社区数据统计 -->
+                <div class="community-stats">
+                    <h3>📊 社区数据</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <strong id="totalUsers">0</strong>
+                            <span>注册用户</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong id="totalPosts">0</strong>
+                            <span>社区文章</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong id="totalComments">0</strong>
+                            <span>互动评论</span>
+                        </div>
                     </div>
                 </div>
-            </section>
+                
+                <!-- 在线用户 -->
+                <div class="online-users">
+                    <h3>👥 在线用户</h3>
+                    <div id="onlineUsersList">
+                        <!-- 在线用户列表动态加载 -->
+                    </div>
+                </div>
+                
+                <!-- 快速链接 -->
+                <div class="quick-links">
+                    <h3>🔗 快速链接</h3>
+                    <ul>
+                        <li><a href="community.html"><i class="fas fa-comments"></i> 社区首页</a></li>
+                        <li><a href="#" onclick="HomeSystem.showCreatePostModal()"><i class="fas fa-edit"></i> 发布新帖</a></li>
+                        <li><a href="#" onclick="HomeSystem.showAuthModal('login')"><i class="fas fa-sign-in-alt"></i> 登录/注册</a></li>
+                        <li><a href="personal.html"><i class="fas fa-user"></i> 我的主页</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        
-        <!-- 右侧：社区信息 -->
-        <div class="col-4">
-            <!-- 保留原有的侧边栏内容 -->
-        </div>
-    </div>
-</main>
+    </main>
 
     <!-- 页脚 -->
     <footer class="community-footer">
@@ -138,8 +168,8 @@
                     <h4>快速链接</h4>
                     <ul>
                         <li><a href="personal.html">我的主页</a></li>
+                        <li><a href="community.html">技术社区</a></li>
                         <li><a href="#about">关于社区</a></li>
-                        <li><a href="#rules">社区规则</a></li>
                         <li><a href="#help">帮助中心</a></li>
                     </ul>
                 </div>
@@ -165,23 +195,856 @@
             <!-- 动态加载登录/注册表单 -->
         </div>
     </div>
+    
+    <!-- 发帖模态框 -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <!-- 动态加载发帖表单 -->
+        </div>
+    </div>
 
-        <!-- 脚本 -->
+    <!-- 脚本 -->
     <script src="assets/js/community.js"></script>
-   <script>
-    // 页面加载时初始化社区
-    document.addEventListener('DOMContentLoaded', function() {
-        CommunitySystem.init();
+    <script>
+    // ========== 首页系统 (HomeSystem) ==========
+    const HomeSystem = {
+        // 初始化
+        init() {
+            console.log('🏠 首页系统初始化...');
+            
+            // 等待页面完全加载
+            setTimeout(() => {
+                this.checkLoginStatus();
+                this.loadPageContent();
+                this.bindEvents();
+            }, 300);
+        },
+        
+        // 检查登录状态
+        checkLoginStatus() {
+            console.log('🔐 检查登录状态...');
+            
+            // 获取当前用户
+            const users = JSON.parse(localStorage.getItem('community_users') || '[]');
+            const session = JSON.parse(localStorage.getItem('community_session') || 'null');
+            const currentUser = users.find(u => u.id === session?.userId);
+            
+            console.log('当前用户:', currentUser ? currentUser.username : '未登录');
+            
+            // 根据登录状态更新界面
+            if (currentUser) {
+                this.renderLoggedInUI(currentUser);
+            } else {
+                this.renderLoggedOutUI();
+            }
+        },
+        
+        // 渲染已登录UI
+        renderLoggedInUI(user) {
+            console.log('👤 渲染已登录界面...');
+            
+            // 1. 更新导航栏
+            this.updateNavbarForUser(user);
+            
+            // 2. 更新用户面板
+            this.renderUserPanel(user);
+            
+            // 3. 显示社区按钮
+            const communityBtn = document.getElementById('communityBtn');
+            if (communityBtn) communityBtn.style.display = 'inline-block';
+            
+            // 4. 更新英雄区域
+            const heroActions = document.getElementById('heroActions');
+            if (heroActions && heroActions.querySelector('.btn-primary:first-child')) {
+                heroActions.querySelector('.btn-primary:first-child').textContent = '欢迎回来！';
+            }
+        },
+        
+        // 渲染未登录UI
+        renderLoggedOutUI() {
+            console.log('🔓 渲染未登录界面...');
+            
+            // 1. 重置导航栏
+            this.resetNavbar();
+            
+            // 2. 显示登录提示面板
+            this.showLoginPrompt();
+            
+            // 3. 隐藏社区按钮
+            const communityBtn = document.getElementById('communityBtn');
+            if (communityBtn) communityBtn.style.display = 'none';
+        },
+        
+        // 更新导航栏用户信息
+        updateNavbarForUser(user) {
+            const navUserInfo = document.getElementById('navUserInfo');
+            if (!navUserInfo) return;
+            
+            navUserInfo.innerHTML = `
+                <div style="display: flex; align-items: center;">
+                    <img src="${user.avatar}" 
+                         alt="${user.username}" 
+                         style="width: 32px; height: 32px; border-radius: 50%; margin-right: 10px;">
+                    <span style="margin-right: 10px;">${user.username}</span>
+                    <button class="btn btn-outline btn-small" onclick="HomeSystem.logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            `;
+        },
+        
+        // 重置导航栏
+        resetNavbar() {
+            const navUserInfo = document.getElementById('navUserInfo');
+            if (!navUserInfo) return;
+            
+            navUserInfo.innerHTML = `
+                <button class="btn btn-outline" onclick="HomeSystem.showAuthModal('login')">
+                    登录/注册
+                </button>
+            `;
+        },
+        
+        // 渲染用户面板
+        renderUserPanel(user) {
+            const userPanel = document.getElementById('userPanel');
+            if (!userPanel) return;
+            
+            // 获取用户帖子
+            const posts = JSON.parse(localStorage.getItem('community_posts') || '[]');
+            const userPosts = posts.filter(p => p.userId === user.id);
+            
+            userPanel.innerHTML = `
+                <div class="user-card">
+                    <div class="user-header">
+                        <img src="${user.avatar}" alt="${user.username}" class="user-avatar">
+                        <div class="user-online"></div>
+                    </div>
+                    <div class="user-info">
+                        <h3 class="user-name">${user.username}</h3>
+                        <p class="user-bio">${user.bio || '还没有个人简介'}</p>
+                    </div>
+                    <div class="user-stats">
+                        <div class="stat-item">
+                            <strong>${userPosts.length}</strong>
+                            <span>帖子</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong>${user.followers?.length || 0}</strong>
+                            <span>粉丝</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong>${user.following?.length || 0}</strong>
+                            <span>关注</span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <a href="community.html" class="btn btn-primary btn-block">
+                            <i class="fas fa-edit"></i> 去社区发帖
+                        </a>
+                        <button onclick="HomeSystem.logout()" class="btn btn-outline btn-block">
+                            <i class="fas fa-sign-out-alt"></i> 退出登录
+                        </button>
+                    </div>
+                </div>
+            `;
+        },
+        
+        // 显示登录提示
+        showLoginPrompt() {
+            const userPanel = document.getElementById('userPanel');
+            if (!userPanel) return;
+            
+            userPanel.innerHTML = `
+                <div class="login-prompt-card">
+                    <div class="prompt-icon">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <h3>加入社区</h3>
+                    <p>登录后可以发布帖子、评论互动</p>
+                    <div class="prompt-buttons">
+                        <button onclick="HomeSystem.showAuthModal('login')" class="btn btn-primary btn-block">
+                            登录
+                        </button>
+                        <button onclick="HomeSystem.showAuthModal('register')" class="btn btn-outline btn-block">
+                            注册
+                        </button>
+                    </div>
+                    <div class="test-account">
+                        <p><small>测试账号：测试用户 / 123456</small></p>
+                    </div>
+                </div>
+            `;
+        },
+        
+        // 加载页面内容
+        loadPageContent() {
+            console.log('📄 加载页面内容...');
+            
+            // 1. 更新统计数据
+            this.updateStats();
+            
+            // 2. 加载文章
+            this.loadArticles();
+            
+            // 3. 加载问答
+            this.loadQuestions();
+            
+            // 4. 加载项目
+            this.loadProjects();
+            
+            // 5. 加载在线用户
+            this.loadOnlineUsers();
+        },
         
         // 更新统计数据
-        CommunitySystem.updateStats();
+        updateStats() {
+            const users = JSON.parse(localStorage.getItem('community_users') || '[]');
+            const posts = JSON.parse(localStorage.getItem('community_posts') || '[]');
+            
+            // 总用户数
+            const totalUsersEl = document.getElementById('totalUsers');
+            if (totalUsersEl) totalUsersEl.textContent = users.length;
+            
+            // 总帖子数
+            const totalPostsEl = document.getElementById('totalPosts');
+            if (totalPostsEl) totalPostsEl.textContent = posts.length;
+            
+            // 总评论数
+            const totalCommentsEl = document.getElementById('totalComments');
+            if (totalCommentsEl) {
+                const totalComments = posts.reduce((sum, post) => sum + (post.comments?.length || 0), 0);
+                totalCommentsEl.textContent = totalComments;
+            }
+        },
         
-        // 加载热门内容
-        CommunitySystem.loadHotPosts();
-        CommunitySystem.loadNewArticles();
+        // 加载文章
+        loadArticles() {
+            const articlesContainer = document.getElementById('articlesContainer');
+            if (!articlesContainer) return;
+            
+            const posts = JSON.parse(localStorage.getItem('community_posts') || '[]');
+            const users = JSON.parse(localStorage.getItem('community_users') || '[]');
+            
+            if (posts.length === 0) {
+                articlesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <h3>暂无技术文章</h3>
+                        <p>快来发布第一篇文章，分享你的技术见解！</p>
+                        <button onclick="HomeSystem.showCreatePostModal()" class="btn btn-primary">
+                            发布文章
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 过滤文章类型（长度较长或标签包含"文章"）
+            const articles = posts
+                .filter(post => post.content.length > 100 || post.tags?.includes('文章'))
+                .slice(0, 3);
+            
+            if (articles.length === 0) {
+                // 如果没有符合条件的文章，显示最新3篇
+                const latestPosts = posts.slice(-3).reverse();
+                articlesContainer.innerHTML = latestPosts.map(post => this.createPostCard(post, users)).join('');
+                return;
+            }
+            
+            articlesContainer.innerHTML = articles.map(post => this.createPostCard(post, users)).join('');
+        },
         
-    });
-</script>
+        // 加载问答
+        loadQuestions() {
+            const questionsContainer = document.getElementById('questionsContainer');
+            if (!questionsContainer) return;
+            
+            const posts = JSON.parse(localStorage.getItem('community_posts') || '[]');
+            const users = JSON.parse(localStorage.getItem('community_users') || '[]');
+            
+            if (posts.length === 0) {
+                questionsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">❓</div>
+                        <h3>暂无技术问答</h3>
+                        <p>有技术问题？快来提问吧！</p>
+                        <button onclick="HomeSystem.showCreatePostModal()" class="btn btn-primary">
+                            提出问题
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 过滤问答类型（包含问号或标签包含"问题"）
+            const questions = posts
+                .filter(post => post.content.includes('?') || post.content.includes('？') || post.tags?.includes('问题'))
+                .slice(0, 3);
+            
+            if (questions.length === 0) {
+                questionsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <p>还没有问答，快来第一个提问吧！</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            questionsContainer.innerHTML = questions.map(post => this.createQuestionCard(post, users)).join('');
+        },
+        
+        // 加载项目
+        loadProjects() {
+            const projectsContainer = document.getElementById('projectsContainer');
+            if (!projectsContainer) return;
+            
+            // 固定项目列表
+            const projects = [
+                {
+                    id: 1,
+                    title: "CodeHub 社区系统",
+                    description: "基于HTML5UP模板构建的编程学习社区，包含用户系统、帖子管理、评论互动等功能。",
+                    tech: ["HTML5", "CSS3", "JavaScript", "LocalStorage"],
+                    github: "https://github.com/qwa0303",
+                    demo: "community.html"
+                },
+                {
+                    id: 2,
+                    title: "个人博客系统",
+                    description: "基于Miniport模板的个人技术博客，支持文章展示、项目展示、联系方式等功能。",
+                    tech: ["HTML5", "CSS3", "JavaScript"],
+                    github: "https://github.com/qwa0303",
+                    demo: "personal.html"
+                },
+                {
+                    id: 3,
+                    title: "技术学习笔记",
+                    description: "整理和分享编程学习过程中的笔记和心得，涵盖Python、C++、前端开发等方向。",
+                    tech: ["Python", "C++", "前端开发"],
+                    github: "https://github.com/qwa0303",
+                    demo: "#"
+                }
+            ];
+            
+            projectsContainer.innerHTML = projects.map(project => `
+                <div class="project-card">
+                    <h4 class="project-title">${project.title}</h4>
+                    <p class="project-description">${project.description}</p>
+                    <div class="project-tech">
+                        ${project.tech.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+                    </div>
+                    <div class="project-links">
+                        <a href="${project.github}" target="_blank" class="project-link github">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                        <a href="${project.demo}" class="project-link">
+                            <i class="fas fa-external-link-alt"></i> 查看演示
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        },
+        
+        // 加载在线用户
+        loadOnlineUsers() {
+            const onlineUsersList = document.getElementById('onlineUsersList');
+            if (!onlineUsersList) return;
+            
+            const users = JSON.parse(localStorage.getItem('community_users') || '[]');
+            
+            if (users.length === 0) {
+                onlineUsersList.innerHTML = `
+                    <div class="empty-state-small">
+                        <p>还没有用户</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // 显示最近活跃的用户
+            const onlineUsers = users
+                .sort((a, b) => new Date(b.lastActive) - new Date(a.lastActive))
+                .slice(0, 5);
+            
+            onlineUsersList.innerHTML = onlineUsers.map(user => `
+                <div class="online-user">
+                    <img src="${user.avatar}" alt="${user.username}" class="online-user-avatar">
+                    <div class="online-user-info">
+                        <div class="online-user-name">${user.username}</div>
+                        <div class="online-user-status">在线</div>
+                    </div>
+                </div>
+            `).join('');
+        },
+        
+        // 创建文章卡片
+        createPostCard(post, users) {
+            const author = users.find(u => u.id === post.userId);
+            const commentCount = post.comments?.length || 0;
+            const likeCount = post.likes?.length || 0;
+            
+            return `
+                <div class="article-card">
+                    <div class="article-header">
+                        <img src="${author?.avatar || 'https://ui-avatars.com/api/?name=User'}" 
+                             alt="${author?.username || '用户'}" 
+                             class="article-avatar">
+                        <div class="article-author">${author?.username || '未知用户'}</div>
+                        <div class="article-time">${this.formatTime(post.timestamp)}</div>
+                    </div>
+                    <h4 class="article-title">${post.content.split('\n')[0].substring(0, 60)}</h4>
+                    <p class="article-excerpt">${post.content.substring(0, 100)}${post.content.length > 100 ? '...' : ''}</p>
+                    ${post.tags && post.tags.length > 0 ? `
+                        <div class="article-tags">
+                            ${post.tags.slice(0, 3).map(tag => `<span class="tag-small">${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="article-stats">
+                        <span class="stat-item"><i class="fas fa-heart"></i> ${likeCount}</span>
+                        <span class="stat-item"><i class="fas fa-comment"></i> ${commentCount}</span>
+                    </div>
+                </div>
+            `;
+        },
+        
+        // 创建问答卡片
+        createQuestionCard(post, users) {
+            const author = users.find(u => u.id === post.userId);
+            const commentCount = post.comments?.length || 0;
+            
+            return `
+                <div class="question-card">
+                    <div class="question-header">
+                        <div class="question-icon">❓</div>
+                        <div class="question-author">${author?.username || '未知用户'} 提问</div>
+                        <div class="question-time">${this.formatTime(post.timestamp)}</div>
+                    </div>
+                    <p class="question-content">${post.content.substring(0, 120)}${post.content.length > 120 ? '...' : ''}</p>
+                    <div class="question-stats">
+                        <span class="stat-item"><i class="fas fa-comment"></i> ${commentCount} 个回答</span>
+                    </div>
+                </div>
+            `;
+        },
+        
+        // 绑定事件
+        bindEvents() {
+            console.log('🔗 绑定事件...');
+            
+            // 绑定登录/注册按钮
+            const authButtons = document.querySelectorAll('[onclick*="showAuthModal"]');
+            authButtons.forEach(btn => {
+                const oldOnclick = btn.getAttribute('onclick');
+                if (oldOnclick && oldOnclick.includes('CommunitySystem')) {
+                    btn.setAttribute('onclick', oldOnclick.replace('CommunitySystem', 'HomeSystem'));
+                }
+            });
+            
+            // 绑定发帖按钮
+            const postButtons = document.querySelectorAll('[onclick*="showCreatePostModal"]');
+            postButtons.forEach(btn => {
+                const oldOnclick = btn.getAttribute('onclick');
+                if (oldOnclick && oldOnclick.includes('CommunitySystem')) {
+                    btn.setAttribute('onclick', oldOnclick.replace('CommunitySystem', 'HomeSystem'));
+                }
+            });
+        },
+        
+        // 显示登录/注册模态框
+        showAuthModal(type = 'login') {
+            // 使用CommunitySystem的模态框
+            if (window.CommunitySystem && CommunitySystem.showAuthModal) {
+                CommunitySystem.showAuthModal(type);
+            } else {
+                // 简单的备用方案
+                const username = prompt('用户名:');
+                const password = prompt('密码:');
+                if (username && password) {
+                    alert('请使用社区页面进行登录');
+                    window.location.href = 'community.html';
+                }
+            }
+        },
+        
+        // 显示发帖模态框
+        showCreatePostModal() {
+            // 检查是否登录
+            const users = JSON.parse(localStorage.getItem('community_users') || '[]');
+            const session = JSON.parse(localStorage.getItem('community_session') || 'null');
+            const currentUser = users.find(u => u.id === session?.userId);
+            
+            if (!currentUser) {
+                alert('请先登录才能发帖');
+                this.showAuthModal('login');
+                return;
+            }
+            
+            // 跳转到社区页发帖
+            if (confirm('发帖功能在社区页面，是否跳转到社区页面？')) {
+                window.location.href = 'community.html';
+            }
+        },
+        
+        // 退出登录
+        logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('community_session');
+                window.location.reload();
+            }
+        },
+        
+        // 格式化时间
+        formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return '刚刚';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
+            if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
+            
+            return date.toLocaleDateString('zh-CN');
+        }
+    };
     
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📄 页面加载完成');
+        
+        // 初始化首页系统
+        HomeSystem.init();
+        
+        // 也初始化社区系统（如果存在）
+        if (typeof CommunitySystem !== 'undefined' && CommunitySystem.init) {
+            CommunitySystem.init();
+        }
+    });
+    
+    // 全局可用
+    window.HomeSystem = HomeSystem;
+    </script>
+    
+    <!-- 添加CSS样式 -->
+    <style>
+    .user-panel {
+        margin-bottom: 25px;
+    }
+    
+    .user-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        border: 1px solid #eaeaea;
+    }
+    
+    .user-header {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 15px;
+    }
+    
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #f0f0f0;
+    }
+    
+    .user-online {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 15px;
+        height: 15px;
+        background: #4CAF50;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 5px rgba(0,0,0,0.2);
+    }
+    
+    .user-name {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-size: 18px;
+    }
+    
+    .user-bio {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+        line-height: 1.4;
+    }
+    
+    .user-stats {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        padding: 15px 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .user-stats .stat-item {
+        text-align: center;
+    }
+    
+    .user-stats .stat-item strong {
+        display: block;
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 3px;
+    }
+    
+    .user-stats .stat-item span {
+        font-size: 12px;
+        color: #888;
+    }
+    
+    .user-actions .btn {
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: 14px;
+    }
+    
+    .login-prompt-card {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        border: 1px solid #eaeaea;
+    }
+    
+    .prompt-icon {
+        font-size: 48px;
+        color: #4CAF50;
+        margin-bottom: 15px;
+    }
+    
+    .login-prompt-card h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+    }
+    
+    .login-prompt-card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .prompt-buttons .btn {
+        margin-bottom: 10px;
+        padding: 10px;
+    }
+    
+    .test-account {
+        margin-top: 15px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #666;
+        border: 1px solid #e9ecef;
+    }
+    
+    .test-account p {
+        margin: 0;
+    }
+    
+    .article-card, .question-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        border: 1px solid #f0f0f0;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .article-card:hover, .question-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .article-header, .question-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .article-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin-right: 12px;
+        object-fit: cover;
+    }
+    
+    .article-author, .question-author {
+        font-weight: 600;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .article-time, .question-time {
+        margin-left: auto;
+        font-size: 12px;
+        color: #888;
+    }
+    
+    .article-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: #222;
+        line-height: 1.4;
+    }
+    
+    .article-excerpt, .question-content {
+        color: #555;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    
+    .article-tags {
+        margin-bottom: 15px;
+    }
+    
+    .tag-small {
+        display: inline-block;
+        background: #e9ecef;
+        color: #495057;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        margin-right: 8px;
+        margin-bottom: 5px;
+    }
+    
+    .article-stats, .question-stats {
+        display: flex;
+        gap: 20px;
+        font-size: 13px;
+        color: #777;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .question-icon {
+        font-size: 20px;
+        margin-right: 10px;
+        color: #FF9800;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #666;
+    }
+    
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+        margin: 0 0 10px 0;
+        color: #444;
+    }
+    
+    .empty-state p {
+        margin-bottom: 20px;
+    }
+    
+    .online-user {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 10px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #f0f0f0;
+    }
+    
+    .online-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        margin-right: 12px;
+        object-fit: cover;
+    }
+    
+    .online-user-name {
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+    }
+    
+    .online-user-status {
+        font-size: 12px;
+        color: #4CAF50;
+    }
+    
+    .quick-links {
+        margin-top: 25px;
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+    
+    .quick-links h3 {
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .quick-links ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .quick-links li {
+        margin-bottom: 10px;
+    }
+    
+    .quick-links a {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+    
+    .quick-links a:hover {
+        background: #e9ecef;
+        color: #4CAF50;
+    }
+    
+    .quick-links i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .community-link {
+        color: #4CAF50 !important;
+        font-weight: 600;
+    }
+    </style>
 </body>
 </html>
