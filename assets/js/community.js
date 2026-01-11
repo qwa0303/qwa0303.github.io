@@ -1620,30 +1620,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error('CommunitySystem未定义！');
     }
-        // 调试函数：显示所有用户数据
-    debugUsers() {
-        console.log('=== 用户数据调试 ===');
-        const users = this.getUsers();
-        console.log(`总用户数: ${users.length}`);
         
-        users.forEach((user, index) => {
-            console.log(`用户${index + 1}:`, {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                password: user.password, // 注意：这里会显示哈希后的密码
-                joinDate: user.joinDate,
-                hasPosts: user.posts ? user.posts.length : 0
-            });
-        });
-        
-        const session = localStorage.getItem('community_session');
-        console.log('当前会话:', session ? JSON.parse(session) : '无');
-        
-        // 在页面上也显示信息
-        const debugDiv = document.createElement('div');
-        debugDiv.style.cssText = 'position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.8);color:white;padding:10px;z-index:9999;font-size:12px;border-radius:5px;';
-        debugDiv.innerHTML = `
             <strong>调试信息</strong><br>
             用户数: ${users.length}<br>
             当前用户: ${this.getCurrentUser() ? this.getCurrentUser().username : '未登录'}
