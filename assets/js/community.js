@@ -1613,30 +1613,13 @@ const CommunitySystem = {
 };
 
 // 页面加载完成后初始化
+// 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM加载完成，开始初始化社区系统...');
     if (typeof CommunitySystem !== 'undefined') {
         CommunitySystem.init();
     } else {
         console.error('CommunitySystem未定义！');
-    }
-        
-            <strong>调试信息</strong><br>
-            用户数: ${users.length}<br>
-            当前用户: ${this.getCurrentUser() ? this.getCurrentUser().username : '未登录'}
-        `;
-        document.body.appendChild(debugDiv);
-        
-        return users;
-    },
-    
-    // 重置测试用户
-    resetTestUser() {
-        if (confirm('重置测试用户？这将删除所有数据！')) {
-            localStorage.clear();
-            alert('数据已清除，页面将刷新');
-            window.location.reload();
-        }
     }
 });
 
